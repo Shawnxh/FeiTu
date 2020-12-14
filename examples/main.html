@@ -1,0 +1,151 @@
+﻿<!doctype html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <title>德国莱茵集团</title>
+    <!-- 暂时没有favicon -->
+    <!-- <link rel="shortcut icon" type="image/x-icon" href="favicon.ico"/> -->
+    <!-- iOS 7.1 的 Safari 中为 meta 标签新增 minimal-ui 属性，让网页在加载时便可隐藏顶部的地址栏与底部的导航栏 -->
+    <meta name="viewport" content="width=device-width,initial-scale=1, maximum-scale=1, user-scalable=no">
+    <link rel="stylesheet" href="./css/dist/main_m.css" />
+</head>
+
+<body>
+    <div id="app">
+        <iframe class="ifm" id="ifm" name="ifm" :src="'./test.html?video='+n+'.mp4'" frameborder="0"
+            class="{n==isBefore?'before':''}" v-if="showList==n" v-for="n in 13">
+        </iframe>
+        <!-- 土司提示 -->
+        <div id="toast">Iphone设备无法使用!</div>
+        <!-- comment页面 -->
+        <div id="commentPage" ref="commentPage">
+            <div class="msg">
+                <div class="header">
+                    <div class="totalComment">评论数: {{commentCount}}</div>
+                    <img src="./img/home/closeComment.png" alt="" ref="closeComment">
+                </div>
+                <div class="detail">
+                    <div id="listBox">
+                        <!-- 数据放这里 -->
+                        <div v-for="items in commentList">
+                            <div class="avatar row"><img :src="items.userHeadImg" alt=""
+                                    onerror="javascript:this.src='./img/home/avatar.png';"></div>
+                            <div class="main row">
+                                <div class="nickName">{{items.userShowname}}</div>
+                                <div class="commentContent">{{items.commentContent}}</div>
+                            </div>
+                            <div class="love row">
+                                <div ref="commentThumbUp" :data-cid="items.commentId"
+                                    :class="items.liked?'thumbImg active':'thumbImg'" @click="getCid($event)">
+                                </div>
+                                <div class="loveNum">{{items.likeAmount}}</div>
+                            </div>
+                            <div class="hr"></div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="footer">
+                    <textarea name="" id="" cols="30" rows="5" maxlength="28" placeholder="输入评论..."></textarea>
+                    <!-- <input type="text" placeholder="输入评论..."> -->
+                    <div class="release" @click="sendComment">发布</div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- 清晰度页面 -->
+        <div id="definitionPage" ref="definitionPage">
+            <div class="top">清晰度</div>
+            <div class="center">
+                <div class="specific active" ref="k4">4 K</div>
+                <div class="specific" ref="p1080">1080 P</div>
+                <div class="specific" ref="p720">720 P</div>
+            </div>
+            <div class="bottom" ref="closeDefinition">返回 <img src="./img/home/return.png" alt=""></div>
+        </div>
+        <!-- 设置页面 -->
+        <div id="settingPage" ref="settingPage">
+            <div class="top">设置</div>
+            <div class="center">
+                <div class="gyroFont">陀螺仪默认</div>
+                <div class="switch">
+                    <input id="cmn-toggle" class="cmn-toggle cmn-toggle-round" type="checkbox">
+                    <label for="cmn-toggle"></label>
+                </div>
+            </div>
+            <div class="bottom" ref="closeSetting">返回 <img src="./img/home/return.png" alt=""></div>
+        </div>
+        <!-- Menu页 -->
+        <div id="menu" ref="menu">
+            <div class="top" ref="login">
+                <div class="avatar"><img src="./img/home/avatar.png" alt=""></div>
+                <div class="nickName">未登录</div>
+            </div>
+            <div class="center">
+                <div class="setting" ref="setting">
+                    <div class="imgBox"><img src="./img/home/setting.png" alt=""></div>
+                    <div class="desc">设置</div>
+                </div>
+                <div class="definition" ref="definition">
+                    <div class="imgBox fontBox">4K</div>
+                    <div class="desc">清晰度</div>
+                </div>
+                <div class="about">
+                    <div class="imgBox"><img src="./img/home/about.png" alt=""></div>
+                    <div class="desc">关于</div>
+                </div>
+            </div>
+            <div class="bottom" ref="closeMenu"><img src="./img/home/closeMenu.png" alt=""></div>
+        </div>
+        <!-- 分享指示页 -->
+        <div id="shareInstructionPage" ref="shareInstructionPage">
+            <div class="top"></div>
+            <div class="okay" ref="okay"></div>
+        </div>
+        <!-- 开屏页 -->
+        <div id="openingPage">
+            <div class="head" ref="head"></div>
+            <div class="name">德国莱茵集团</div>
+            <div class="loading"></div>
+            <div class="go" ref="go">开启全景之旅</div>
+            <div class="support">飞图科技支持</div>
+        </div>
+        <!-- 缩略图 -->
+        <div class="img-list" v-show="isShow" ref="imglist">
+            <div class="imgNameContainer" v-for="items in Lists">
+                <img @click="changeSelect(items.id)" :src="items.src" :alt="items.name" />
+                <div class="thumbnailName">{{items.name}}</div>
+            </div>
+        </div>
+        <div class="layout"><img src="./img/loading.gif" /></div>
+        <div class="layer" id="pop" ref="pop">
+            <div class="pop">
+                <div class="title">观看教程</div>
+                <div class="detail"><img class="teach-img" src="./img/teach1.png" alt="" />
+
+                    <div>开启陀螺仪 <img class="gesture-img" src="./img/gesture1.png" alt="" />模式可以晃动手机查看不同角度的视频。</div>
+                </div>
+                <div class="detail"><img class="teach-img" src="./img/teach2.png" alt="" />
+
+                    <div>未开启陀螺仪可以滑动屏幕查看不同角度的视频。</div>
+                </div>
+                <div class="detail"><img class="teach-img" src="./img/teach3.png" alt="" />
+
+                    <div>若视角偏离，视角恢复<img class="gesture-img" src="./img/gesture2.png" alt="" />按钮可以帮您恢复正常视角。</div>
+                </div>
+                <div class="btn" ref="btn">知道了</div>
+                <!-- <div class="close" ref="close"></div> -->
+            </div>
+        </div>
+    </div>
+    <script src="http://res.wx.qq.com/open/js/jweixin-1.6.0.js"></script>
+    <script src="./vendor/vue.min.js"></script>
+    <script src="./vendor/jquery-3.5.1.min.js"></script>
+    <script src="./js/main.js"></script>
+    <script src="./js/share.js"></script>
+    </script>
+</body>
+
+</html>

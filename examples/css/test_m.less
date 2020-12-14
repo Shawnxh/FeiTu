@@ -1,0 +1,646 @@
+* {
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.clearfix:after,
+.clearfix:before {
+  content: "";
+  display: table;
+}
+
+.clearfix:after {
+  clear: both;
+}
+
+.clearfix {
+  *zoom: 1;
+}
+
+#app ._toolBarArea {
+  display: block !important;
+}
+
+#another ._toolBarArea {
+  display: none !important;
+}
+
+#another.fade_out {
+  animation: fade_out .9s ease-in forwards;
+}
+
+#another {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+}
+
+#app {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  // z-index: 1;
+  .add {
+    top: 67rem;
+    transition: top 1s;
+  }
+}
+
+#pop1,
+#pop2,
+#pop3 {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  // top: 9.5625rem;
+  top: 14.5625rem;
+  width: 33.8125rem;
+  height: 42.75rem;
+  z-index: 1000;
+  background-color: #ffffff;
+  opacity: .8;
+  border-radius: 1.25rem;
+  /*left:50%;*/
+  /*top:50%;*/
+  /*margin-left:-10px;*/
+  /*margin-top:-10px;*/
+  /*width:20px;*/
+  /*height:20px;*/
+  /*background-color:rgba(255,255,255,0.5);*/
+  /*-webkit-border-radius: 50%;*/
+  /*-moz-border-radius: 50%;*/
+  /*border-radius: 50%;*/
+  display: none;
+  /*display: flex;*/
+  align-items: center;
+  // justify-content: space-around;
+  color: #fff;
+  flex-direction: column;
+
+  #title1,
+  #title2,
+  #title3 {
+    position: absolute;
+    left: 50%;
+    top: -0.9375rem;
+    transform: translateX(-50%);
+    font-size: 15px;
+    color: #ffffff;
+    height: 2.8875rem;
+    width: 19rem;
+    text-align: center;
+    background: url(../../img/home/title_bgi.png) no-repeat;
+    background-size: 19.0625rem 2.9375rem;
+  }
+
+  // #full_feature{
+  //   width: 90%;
+  //   height: 40%;
+  // }
+  .content {
+    font-size: 14px;
+    color: #303030;
+    width: 29rem;
+    // height: 15.6875rem;
+    height: 19.625rem;
+    overflow-x: hidden;
+    overflow-y: auto;
+    position: absolute;
+    left: 50%;
+    top: 19.1875rem;
+    transform: translateX(-50%);
+  }
+
+
+  .close {
+    width: 3.8125rem;
+    height: 3.75rem;
+    background-image: url(../../img/home/closePop.png);
+    background-size: 3.8125rem 3.75rem;
+    position: absolute;
+    left: 50%;
+    bottom: -7.5rem;
+    transform: translateX(-50%);
+  }
+}
+
+// toolBarAxera
+._toolBarArea {
+
+  ._toolBarPV {
+    width: 11.875rem;
+    height: 3.3125rem;
+    position: fixed;
+    left: 1.1875rem;
+    top: 1.75rem;
+    opacity: 0;
+    cursor: pointer;
+    color: #fff;
+    font-family: PingFang SC;
+    font-weight: 500;
+    font-style: italic;
+    // 空白会被浏览器保留:
+    white-space: pre;
+    // animation: PV 0.5s ease 1s 1 forwards
+
+    ._toolBarTotalPV {
+      width: 11.875rem;
+      height: 1.5rem;
+      position: absolute;
+      left: 50%;
+      top: 0;
+      transform: translateX(-50%);
+    }
+
+    ._toolBarTodayPV {
+      width: 11.875rem;
+      height: 1.5rem;
+      position: absolute;
+      left: 50%;
+      bottom: 0;
+      transform: translateX(-50%);
+    }
+  }
+
+  ._toolBarMsg {
+    width: 3.0625rem;
+    height: 2.83125rem;
+    position: fixed;
+    right: 2.625rem;
+    top: 7.875rem;
+    opacity: 0;
+    cursor: pointer;
+    background: url("../../img/home/msg.png") no-repeat;
+    background-size: 3.0625rem 2.8375rem;
+    // animation: msg 0.5s ease 1s 1 forwards
+  }
+
+  ._toolBarShare {
+    width: 3.0625rem;
+    height: 3.26875rem;
+    position: fixed;
+    right: 2.6875rem;
+    top: 1.8125rem;
+    opacity: 0;
+    cursor: pointer;
+    background: url("../../img/home/share.png") no-repeat;
+    background-size: 3.0625rem 3.26875rem;
+    // animation: share 0.5s ease 1s 1 forwards
+  }
+
+  ._toolBarThumbUpBox {
+    width: 2.9375rem;
+    height: 5rem;
+    position: fixed;
+    top: 13.375rem;
+    right: 2.75rem;
+    opacity: 0;
+
+    // animation: thumbUpBox 0.5s ease 1s 1 forwards;
+    ._toolBarThumbUp {
+      width: 2.9375rem;
+      height: 3.0625rem;
+      position: absolute;
+      top: 0;
+      left: 0;
+      cursor: pointer;
+      background: url("../../img/home/thumb_up.png") no-repeat;
+      background-size: 2.9375rem 3.0625rem;
+
+      &.active {
+        background: url("../../img/home/thumb_up_selected.png") no-repeat;
+        background-size: 2.9375rem 3.0625rem;
+      }
+    }
+
+    ._toolBarThumbUpValue {
+      width: fit-content;
+      height: 1.0625rem;
+      position: absolute;
+      left: 50%;
+      bottom: 0;
+      transform: translateX(-50%);
+      text-align: center;
+      color: #fff;
+    }
+
+  }
+
+  ._toolBarMore {
+    width: 3.6875rem;
+    height: 15.0625rem;
+    position: fixed;
+    right: 2.3125rem;
+    top: 21.0625rem;
+    opacity: 0;
+    border: 1.5px solid #FFFFFF;
+    border-radius: 15px;
+    // animation: more 0.5s ease 1s 1 forwards;
+
+    ._toolBarReset {
+      width: 2.625rem;
+      height: 2.625rem;
+      position: absolute;
+      left: 50%;
+      bottom: 1.4375rem;
+      transform: translateX(-50%);
+      cursor: pointer;
+      background: url("../../img/home/reset.png") no-repeat;
+      background-size: 2.625rem 2.625rem;
+
+    }
+
+    ._toolBarGyro {
+      width: 2.625rem;
+      height: 2.375rem;
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      cursor: pointer;
+      background: url("../../img/home/gyro.png") no-repeat;
+      background-size: 2.625rem 2.375rem;
+
+      &.active {
+        background: url("../../img/home/gyro_selected.png") no-repeat;
+        background-size: 2.625rem 2.375rem;
+      }
+    }
+
+    ._toolBarZoomIn {
+      width: 2.3125rem;
+      height: 2.3125rem;
+      position: absolute;
+      left: 50%;
+      top: 1.4375rem;
+      transform: translateX(-50%);
+      cursor: pointer;
+      background: url("../../img/home/zoom_in.png") no-repeat;
+      background-size: 2.3125rem 2.3125rem;
+    }
+  }
+
+  ._toolBarScenario {
+    width: 18.1rem;
+    height: 2.9rem;
+    position: fixed;
+    left: 50%;
+    top: 1.875rem;
+    opacity: 0;
+    transform: translateX(-50%);
+    cursor: pointer;
+    border: 1.5px solid #ffffff;
+    // animation: scenario 0.5s ease 1s 1 forwards;
+
+    #scenarioName {
+      width: fit-content;
+      height: 1.6875rem;
+      position: absolute;
+      cursor: pointer;
+      font-family: Adobe Heiti Std;
+      color: rgb(247, 240, 240);
+      font-size: 14px;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -70%);
+    }
+  }
+
+  ._toolBarZoomOut {
+    display: none;
+    width: 2.9375rem;
+    height: 2.9375rem;
+    position: fixed;
+    top: 2.125rem;
+    right: 2.5rem;
+    background: url("../../img/home/zoom_out.png") no-repeat;
+    background-size: 2.9375rem 2.9375rem;
+  }
+
+
+  ._toolBarBack {
+    -webkit-tap-highlight-color: transparent;
+    position: fixed;
+    width: 3.1875rem;
+    height: 3.0625rem;
+    border: none;
+    background: url("../../img/home/back.png") no-repeat;
+    background-size: 3.1875rem 3.0625rem;
+    left: 7.8125rem;
+    bottom: 14.9375rem;
+    opacity: 0;
+    cursor: pointer;
+    // animation: back 0.5s ease 1s 1 forwards;
+  }
+
+  ._toolBarBtn {
+    position: fixed;
+    width: 5.5rem;
+    height: 5.5625rem;
+    background: url("../../img/home/play.png") no-repeat;
+    background-size: 5.5rem 5.5625rem;
+    left: 50%;
+    bottom: 13.6875rem;
+    opacity: 0;
+    transform: translatex(-50%);
+    cursor: pointer;
+    // animation: btn 0.5s ease 1s 1 forwards;
+
+  }
+
+  ._toolBarMenu {
+    position: fixed;
+    width: 3.4375rem;
+    height: 3.0625rem;
+    background: url("../../img/home/menu.png") no-repeat;
+    background-size: 3.4375rem 3.0625rem;
+    right: 7.75rem;
+    bottom: 14.9375rem;
+    opacity: 0;
+    cursor: pointer;
+    // animation: menu 0.5s ease 1s 1 forwards;
+
+  }
+
+}
+
+// 全景图淡出
+@keyframes fade_out {
+  1% {
+    opacity: .9;
+  }
+
+  33.3% {
+    opacity: .6;
+  }
+
+  66.6% {
+    opacity: .3;
+  }
+
+  100% {
+    opacity: .1;
+  }
+}
+
+// -- 工具栏上半部分Beginning --
+
+@keyframes PV {
+  1% {
+    transform: translateY(-5rem);
+    opacity: .1;
+  }
+
+  25% {
+    transform: translateY(-4rem);
+    opacity: .25;
+  }
+
+  50% {
+    transform: translateY(-2rem);
+    opacity: .5;
+  }
+
+  75% {
+    transform: translateY(-1rem);
+    opacity: .5;
+  }
+
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes scenario {
+  1% {
+    transform: translateX(-50%) translateY(-5rem);
+    opacity: .1;
+  }
+
+  25% {
+    transform: translateX(-50%) translateY(-4rem);
+    opacity: .25;
+  }
+
+  50% {
+    transform: translateX(-50%) translateY(-2rem);
+    opacity: .5;
+  }
+
+  75% {
+    transform: translateX(-50%) translateY(-1rem);
+    opacity: .5;
+  }
+
+  100% {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+  }
+}
+
+// -- 工具栏上半部分Ending --
+
+// -- 工具栏右半部分Beginning --
+
+@keyframes msg {
+  1% {
+    transform: translateX(6rem);
+    opacity: .1;
+  }
+
+  25% {
+    transform: translateX(5rem);
+    opacity: .25;
+  }
+
+  50% {
+    transform: translateX(3rem);
+    opacity: .5;
+  }
+
+  75% {
+    transform: translateX(1rem);
+    opacity: .5;
+  }
+
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes share {
+  1% {
+    transform: translateX(6rem);
+    opacity: .1;
+  }
+
+  25% {
+    transform: translateX(5rem);
+    opacity: .25;
+  }
+
+  50% {
+    transform: translateX(3rem);
+    opacity: .5;
+  }
+
+  75% {
+    transform: translateX(1rem);
+    opacity: .5;
+  }
+
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes thumbUpBox {
+  1% {
+    transform: translateX(6rem);
+    opacity: .1;
+  }
+
+  25% {
+    transform: translateX(5rem);
+    opacity: .25;
+  }
+
+  50% {
+    transform: translateX(3rem);
+    opacity: .5;
+  }
+
+  75% {
+    transform: translateX(1rem);
+    opacity: .5;
+  }
+
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes more {
+  1% {
+    transform: translateX(6rem);
+    opacity: .1;
+  }
+
+  25% {
+    transform: translateX(5rem);
+    opacity: .25;
+  }
+
+  50% {
+    transform: translateX(3rem);
+    opacity: .5;
+  }
+
+  75% {
+    transform: translateX(1rem);
+    opacity: .5;
+  }
+
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+// -- 工具栏右半部分Ending --
+
+// -- 工具栏下半部分Beginning --
+
+@keyframes back {
+  1% {
+    transform: translateY(14rem);
+    opacity: 0;
+  }
+
+  25% {
+    transform: translateY(10rem);
+    opacity: .25;
+  }
+
+  50% {
+    transform: translateY(5rem);
+    opacity: .5;
+  }
+
+  75% {
+    transform: translateY(2rem);
+    opacity: .75;
+  }
+
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes btn {
+  1% {
+    transform: translateX(-50%) translateY(13.6875rem);
+    opacity: .1;
+  }
+
+  25% {
+    transform: translateX(-50%) translateY(10rem);
+    opacity: .25;
+  }
+
+  50% {
+    transform: translateX(-50%) translateY(5rem);
+    opacity: .5;
+  }
+
+  75% {
+    transform: translateX(-50%) translateY(2rem);
+    opacity: .5;
+  }
+
+  100% {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes menu {
+  1% {
+    transform: translateY(14rem);
+    opacity: .1;
+  }
+
+  25% {
+    transform: translateY(10rem);
+    opacity: .25;
+  }
+
+  50% {
+    transform: translateY(5rem);
+    opacity: .5;
+  }
+
+  75% {
+    transform: translateY(2rem);
+    opacity: .75;
+  }
+
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+// -- 工具栏下半部分Ending --
