@@ -8,6 +8,29 @@ var vm = null;
     vm = new Vue({
       el: "#app",
       data: {
+        // 登录之前的api前缀
+        baseUrl: "http://192.168.100.70/open",
+        // https://backtest.cdflytu.com
+        // 登录之后的api前缀
+        loginBaseUrl: "http://192.168.100.70/login_open",
+        // 项目视频识别 videoKey
+        videoKey: "22e3fae115bd48a8b84db72a57eee061",
+        // 登录行为 => 跳转api
+        loginNeed: "https://backtest.cdflytu.com/open/api/user/weixin/login/userInfoLogin/",
+        // 评论页 => 页码
+        pageNo: 1,
+        // 评论列表数据
+        commentList: [],
+        // 评论总条数
+        commentCount: "",
+        showList: 1,
+        isShow: true,
+        // 存储是否有用户登录的状态
+        isLogin: "",
+        // 存储登录用户数据
+        loginUser: {},
+        // 编码登录成功后的返回地址
+        encodeUrl: encodeURIComponent(window.location.href + "?time=1111"),
         Lists: [{
           'id': 1,
           'src': 'img/thumbnail/1.jpg',
@@ -28,24 +51,13 @@ var vm = null;
           'id': 5,
           'src': 'img/thumbnail/5.jpg',
           'name': 'TUV莱茵'
-        }],
-        pageNo: 1,
-        // _keyStr: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",
-        commentList: [],
-        // 评论列表
-        commentCount: "",
-        // 评论数
-        showList: 1,
-        isShow: true,
-        baseUrl: "http://localhost/open",
-        // 登录之前的api前缀
-        loginBaseUrl: "http://localhost/login_open",
-        //登录之后的api前缀
-        isLogin: "",
-        //存储是否有用户登录的状态
-        loginUser: {},
-        // linkUrl: window.location.href.split('?')[0],
-        encodeUrl: encodeURIComponent(window.location.href + "?time=1111")
+        }]
+      },
+      beforeCreate: function beforeCreate() {
+        if (navigator.userAgent.match(/(iPhone|iPod|Android|ios)/i)) {} // 防止 PC 端打开行为 => 跳转 PC 端(必填)
+        else {
+            window.location.href = "http://192.168.100.70/laiyin_pc/examples/main.html";
+          }
       },
       created: function created() {
         var _this = this;
@@ -94,58 +106,23 @@ var vm = null;
       mounted: function mounted() {
         var _this2 = this;
 
-        var that = this;
-        console.log(this.linkUrl);
-        console.log(that.encodeUrl);
+        var that = this; // 未登录
 
         if (!that.isLogin) {
           this.$refs.login.onclick = function () {
-            window.location.href = 'http://backtest.cdflytu.com/open/api/user/weixin/login/userInfoLogin' + '?from=' + that.encodeUrl;
+            window.location.href = _this2.loginNeed + '?from=' + that.encodeUrl;
           };
         } // 登录成功
 
 
         if (that.isLogin) {
-          var token = this.$options.methods.getCookie("token"); // 填充menu栏的用户信息
-
+          // 填充menu栏的用户信息
           $('#menu .top .avatar img').attr("src", that.loginUser.wxHeadImgUrl);
           $('#menu .top .nickName').text(that.loginUser.wxNickname); // 填充评论列表
 
-          this.fillCommentList(); // let that = this;
+          this.fillCommentList(); // 上拉加载更多
 
-          $("#commentPage .detail").scroll(function () {
-            var a = document.getElementById("listBox");
-
-            if ($(this).scrollTop() + $(this).height() - 20 > a.offsetHeight) {
-              that.pageNo += 5;
-              $.ajax({
-                type: "get",
-                url: that.loginBaseUrl + '/api/video/video-page/videoComment/' + '?videoKey=22e3fae115bd48a8b84db72a57eee061' + '&pageNo=' + that.pageNo + '&pageSize=5',
-                async: false,
-                beforeSend: function beforeSend(request) {
-                  request.setRequestHeader("token", that.getCookie("token"));
-                },
-                success: function success(res) {
-                  var a = res.result.list; // 评论解码
-
-                  var b = a.map(function (item) {
-                    var commentCont = item.commentContent;
-                    item.commentContent = that.en_de_code().decode(commentCont);
-                    return item;
-                  });
-                  that.commentList = that.commentList.concat(b);
-                  that.commentCount = res.result.page.totalNum;
-                },
-                error: function error(err) {
-                  console.log(err);
-                }
-              });
-            } //     console.log(a.clientHeight);
-            // console.log(a.offsetHeight);
-            // console.log(a.scrollHeight);
-            // console.log($(this).scrollTop());
-
-          });
+          this.loadMore();
         } // 进入视频
 
 
@@ -202,7 +179,7 @@ var vm = null;
         this.$refs.k4.onclick = function () {
           sessionStorage.setItem("sharpness", "4K");
           sessionStorage.setItem("key", null);
-          document.getElementById('ifm').contentWindow.location.reload(); // 播放状态下切换清晰度=>强制显示imglist
+          document.getElementById('ifm').contentWindow.location.reload(); // 播放状态下切换清晰度 => 强制显示imglist
 
           _this2.$refs.imglist.style.display = "block";
         };
@@ -223,12 +200,45 @@ var vm = null;
       },
       updated: function updated() {},
       methods: {
+        // 上拉加载
+        loadMore: function loadMore() {
+          var that = this;
+          $("#commentPage .detail").scroll(function () {
+            var a = document.getElementById("listBox");
+
+            if ($(this).scrollTop() + $(this).height() - 60 > a.offsetHeight) {
+              that.pageNo += 1;
+              $.ajax({
+                type: "get",
+                url: that.loginBaseUrl + '/api/video/video-page/videoComment/' + '?videoKey=' + that.videoKey + '&pageNo=' + that.pageNo + '&pageSize=5',
+                async: false,
+                beforeSend: function beforeSend(request) {
+                  request.setRequestHeader("token", that.getCookie("token"));
+                },
+                success: function success(res) {
+                  var a = res.result.list; // 评论解码
+
+                  var b = a.map(function (item) {
+                    var commentCont = item.commentContent;
+                    item.commentContent = that.en_de_code().decode(commentCont);
+                    return item;
+                  });
+                  that.commentList = that.commentList.concat(b);
+                  that.commentCount = res.result.page.totalNum;
+                },
+                error: function error(err) {
+                  console.log(err);
+                }
+              });
+            }
+          });
+        },
         // 填充评论列表
         fillCommentList: function fillCommentList() {
           var that = this;
           $.ajax({
             type: "get",
-            url: this.loginBaseUrl + '/api/video/video-page/videoComment/' + '?videoKey=22e3fae115bd48a8b84db72a57eee061' + '&pageNo=1' + '&pageSize=5',
+            url: this.loginBaseUrl + '/api/video/video-page/videoComment/' + '?videoKey=' + that.videoKey + '&pageNo=1' + '&pageSize=5',
             async: false,
             cache: false,
             beforeSend: function beforeSend(request) {
@@ -249,6 +259,7 @@ var vm = null;
             }
           });
         },
+        // 评论发布
         sendComment: function sendComment() {
           var that = this;
           var contentOriginal = $("#commentPage .footer textarea").val(); // 清除空格
@@ -258,12 +269,13 @@ var vm = null;
           if (content == null || content == "") {
             alert("评论不能为空!");
           } else {
+            // 发布行为 => 添加评论api
             $.ajax({
               type: "post",
               url: this.loginBaseUrl + '/api/video/video-page/addComment/',
               contentType: "application/json",
               data: JSON.stringify({
-                "videoKey": "22e3fae115bd48a8b84db72a57eee061",
+                "videoKey": that.videoKey,
                 "content": contentOriginal
               }),
               async: false,
@@ -272,11 +284,13 @@ var vm = null;
               },
               success: function success(res) {
                 if (res.result) {
-                  $("#commentPage .footer textarea").val(""); // that.commentList = "";
-                  // console.log(that.commentList);
+                  $("#commentPage .footer textarea").val(""); // 重新拉取评论
 
-                  that.fillCommentList();
-                  console.log(that.commentList);
+                  that.fillCommentList(); // 重置 pageNo =>  发布评论之后重置上拉行为
+
+                  that.pageNo = 1; // 发布之后回到顶部
+
+                  $("#commentPage .detail").scrollTop(0);
                 }
               },
               error: function error(err) {
@@ -300,7 +314,7 @@ var vm = null;
               }),
               async: false,
               beforeSend: function beforeSend(request) {
-                request.setRequestHeader("token", that.$options.methods.getCookie("token"));
+                request.setRequestHeader("token", that.getCookie("token"));
               },
               success: function success(res) {
                 if (res.result) {
@@ -313,12 +327,7 @@ var vm = null;
                     return item;
                   });
                   that.commentList = newCommentList;
-                } // if ($("[data-cid='" + commentId + "']").hasClass('active')) {
-                //     $("[data-cid='" + commentId + "']").removeClass('active');
-                // }
-                // let commentLikeAmount = Number($("[data-cid='" + commentId + "']").next().text());
-                // $("[data-cid='" + commentId + "']").next().text(commentLikeAmount - 1);
-
+                }
               },
               error: function error(err) {
                 console.log(err);
@@ -335,7 +344,7 @@ var vm = null;
               }),
               async: false,
               beforeSend: function beforeSend(request) {
-                request.setRequestHeader("token", that.$options.methods.getCookie("token"));
+                request.setRequestHeader("token", that.getCookie("token"));
               },
               success: function success(res) {
                 if (res.result) {
@@ -349,13 +358,7 @@ var vm = null;
                     return item;
                   });
                   that.commentList = newCommentList;
-                } // if ($("[data-cid='" + commentId + "']").hasClass('active')) {
-                // } else {
-                //     $("[data-cid='" + commentId + "']").addClass('active');
-                // }
-                // let commentLikeAmount = Number($("[data-cid='" + commentId + "']").next().text());
-                // $("[data-cid='" + commentId + "']").next().text(commentLikeAmount + 1);
-
+                }
               },
               error: function error(err) {
                 console.log(err);
@@ -380,6 +383,21 @@ var vm = null;
           }
 
           return "";
+        },
+        // 通过url获取token值
+        getQueryVariable: function getQueryVariable(variable) {
+          var query = window.location.search.substring(1);
+          var vars = query.split("&");
+
+          for (var i = 0; i < vars.length; i++) {
+            var pair = vars[i].split("=");
+
+            if (pair[0] == variable) {
+              return pair[1];
+            }
+          }
+
+          return false;
         },
         en_de_code: function en_de_code() {
           return Base64 = {
@@ -488,34 +506,16 @@ var vm = null;
           };
         },
         // =======================================================================================
-        // 通过url获取token值
-        getQueryVariable: function getQueryVariable(variable) {
-          var query = window.location.search.substring(1);
-          var vars = query.split("&");
-
-          for (var i = 0; i < vars.length; i++) {
-            var pair = vars[i].split("=");
-
-            if (pair[0] == variable) {
-              return pair[1];
-            }
-          }
-
-          return false;
-        },
         changeSelect: function changeSelect(index) {
           if (index != this.showList) {
             console.log('热点事件函数changeselect()触发'); // this.isBefore = this.showList;
             // this.isBefore = index;
 
-            this.showList = index; // 设置进入之后的视频状态 pause
-            // localStorage.setItem("pause", true);
-
-            document.getElementsByClassName("layout")[0].style.display = "flex";
+            this.showList = index;
             document.getElementsByClassName("img-list")[0].style.display = "block";
           }
         },
-        // 缩略图 底部文字溢出 来回滚动
+        // 缩略图 底部文字溢出 => 来回滚动
         thumbnailNameScroll: function thumbnailNameScroll() {
           var nameArray = document.getElementsByClassName('thumbnailName');
 
@@ -553,7 +553,7 @@ var vm = null;
             _loop(i);
           }
         },
-        // 动态获取设备屏幕宽度=>Element adaptation
+        // 动态获取设备屏幕宽度 => Element adaptation
         changeFontSize: function changeFontSize() {
           document.querySelector('html').style.fontSize = document.documentElement.clientWidth / 750 * 16 + 'px';
         },
@@ -578,8 +578,8 @@ var vm = null;
         },
         turnOnGyro: function turnOnGyro() {
           $('#cmn-toggle').change(function () {
+            // prop()函数用于设置或返回当前jQuery对象所匹配的元素的属性值,复选框被选中时
             if ($(this).prop("checked")) {
-              //prop()函数用于设置或返回当前jQuery对象所匹配的元素的属性值,复选框被选中时
               sessionStorage.setItem("isTurnOn", true);
             } else {
               sessionStorage.setItem("isTurnOn", false);

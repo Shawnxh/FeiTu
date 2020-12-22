@@ -1,24 +1,26 @@
 "use strict";
 
-var protocol_domain_port = 'http://localhost/open'; // 微信分享默认调用接口
+var $appid, $timestamp, $noncestr, $signature, $description, $title1; // 微信分享调用接口(share的api暂时只能用http这个)
 
-var $appid, $timestamp, $noncestr, $signature, $description, $title1;
+var protocol_domain_port = 'http://39.102.65.183:8080/open'; // 链接地址
+
+var $linkUrl = "https://ftplayer.cdflytu.com/mxreality/laiyin/examples/main.html"; // 分享图片 => 线上地址
+
+$imgUrl = 'https://ftplayer.cdflytu.com/mxreality/laiyin/examples/img/ly.png';
 $description = '德国莱茵集团 (RWE) 成立于1898年，总部位于德国埃森。是德国第一大能源公司，德国第一大发电公司，德国第一大可再生能源公司，欧洲三大能源公司之一。莱茵集团旗下四大板块独立运营，并向莱茵集团汇报业务情况和财务报告，共同支撑莱茵集团RWE AG业务发展。';
-$title1 = "VR互动全景：德国莱茵集团"; //获取当前页面的url
+$title1 = "VR互动全景：德国莱茵集团"; //获取当前页面的url => 完整url 
 
-var linkUrl = window.location.href.split('?')[0]; // console.log(linkUrl)
-// encodeURIComponent(),请求后台接口需要用encodeURIComponent()
+var $linkUrlToken = window.location.href; // encodeURIComponent(),请求后台接口需要用encodeURIComponent()
 
-var encodeUrl = encodeURIComponent(linkUrl);
+var encodeUrl = encodeURIComponent($linkUrlToken);
 $.ajax({
-  type: "GET",
-  url: protocol_domain_port + "/api/user/weixin/js-sdk/getJsSdkConfig" + "?url=" + encodeUrl,
-  // url: "http://39.102.65.183:8181/open/api/user/weixin/js-sdk/getJsSdkConfig" + "?url=" + encodeUrl,
-  // dataType: "jsonp",
-  cache: false,
+  type: "get",
+  url: protocol_domain_port + "/api/user/weixin/js-sdk/getJsSdkConfig/" + "?url=" + encodeUrl,
   async: false,
+  cache: false,
   success: function success(data) {
-    // console.log(data);
+    console.log(data.result);
+
     if (data.code == 200) {
       $appid = data.result.appId; // appid
 
@@ -27,7 +29,6 @@ $.ajax({
       $noncestr = data.result.nonceStr; // noncestr
 
       $signature = data.result.signature; // signature
-      // console.log($appid + '=======' + $timestamp + '=======' + $noncestr + '========' + $signature)
       //**配置微信信息**
 
       wx.config({
@@ -44,14 +45,12 @@ $.ajax({
   error: function error(msg) {
     console.log('err!');
   }
-}); // console.log($appid + '=======' + $timestamp + '=======' + $noncestr + '========' + $signature)
-
+});
 wx.ready(function () {
   //分享微信朋友圈
   wx.updateTimelineShareData({
-    imgUrl: "http://ftplayer.cdflytu.com/mxreality/laiyin/examples/img/ly.png",
-    // imgUrl: "",
-    link: linkUrl,
+    imgUrl: $imgUrl,
+    link: $linkUrl,
     desc: $description,
     title: $title1,
     success: function success() {// alert('分享成功!');
@@ -63,10 +62,9 @@ wx.ready(function () {
     // 分享标题
     desc: $description,
     // 分享描述
-    link: linkUrl,
+    link: $linkUrl,
     // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
-    imgUrl: "http://ftplayer.cdflytu.com/mxreality/laiyin/examples/img/ly.png",
-    // imgUrl: "", // 分享图标
+    imgUrl: $imgUrl,
     type: '',
     // 分享类型,music、video或link，不填默认为link
     dataUrl: '',

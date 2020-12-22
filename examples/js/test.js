@@ -1,35 +1,24 @@
-var title = [];
-title[0] = '莱茵集团';
-title[1] = '环境测试';
-title[2] = '稳态模拟器';
-title[3] = '机械载荷测试';
-
-var imgUrl = [];
-imgUrl[0] = ['img/pop/laiyin1.jpg', 'img/pop/laiyin2.jpg', 'img/pop/laiyin3.jpg'];
-imgUrl[1] = ['img/pop/laiyin4.jpg'];
-imgUrl[2] = ['img/pop/laiyin5.jpg'];
-imgUrl[3] = ['img/pop/laiyin6.jpg'];
-
-var text = [];
-text[0] = '自1872年成立以来，坚持为解决人类、环境和科技互动过程中出现的挑战开发安全持续的解决方案。德国莱茵TüV集团作为一个独立、公正和专业的机构，长期致力于营造一个同时符合人类和环境需要的美好未来。德国莱茵TÜV集团公司总部位于科隆，在全球61个国家设有490家分支机构，员工总数为17000人。集团共包含120多家公司。其中运营控股公司是TÜV Rheinland AG，TÜV Rheinland Berlin BrandenburgPfalz e.V.是单一股东。';
-text[1] = '环境测试区可开展温度循环、光伏PID测试等服务，能模拟组件在极端恶劣条件下的工作表现。';
-text[2] = '全亚洲最大的太阳能稳态模拟器，最多能容纳20块太阳能组建同时进行光筛测试，也能模拟出组建最真实的工作状态。';
-text[3] = '机械载荷测试是为了确保光伏电站的可靠性，可测试组件在受到暴风、积雪等情况下的受力，并检测组件是否能够承受高强度的机械载荷，最高测试压强可达10000Pa。';
-
+// 登录之前的api前缀
+const baseUrl = "http://192.168.100.70/open"; // https://backtest.cdflytu.com
+//登录之后的api前缀
+const loginBaseUrl = "http://192.168.100.70/login_open";
+// 项目视频识别 videoKey
+const videoKey = "22e3fae115bd48a8b84db72a57eee061";
+// 登录行为 => 跳转api地址
+const loginNeed = "https://backtest.cdflytu.com/open/api/user/weixin/login/userInfoLogin/";
+//存储是否有用户登录的状态
+let isLogin = "";
+// 存储视频点赞数 => 用户操作 thumbUp 会用到
+let likedAmount;
+// 编码登录成功后的返回地址
+let linkUrl = encodeURIComponent(window.parent.location.href + "?time=1111");
 
 let vr = null
 let scene = null
 let renderer = null
 let container = null
+// 存取iphone端土司提示定时器 => 用于优化对用户不断点击产生过多一次性定时器的的问题
 let toast;
-
-const baseUrl = "http://localhost/open"; // 登录之前的api前缀
-const loginBaseUrl = "http://localhost/login_open"; //登录之后的api前缀
-
-let userThumbUp = ""; // 存储用户对于视频的点赞状态
-
-let isLogin = ""; //存储是否有用户登录的状态
-let linkUrl = encodeURIComponent(window.parent.location.href + "?time=1111");
 
 window.onload = function () {
     initTest();
@@ -44,8 +33,6 @@ window.onload = function () {
         $('#full_feature2').swipeslider();
         $('#full_feature3').swipeslider();
     }, 100)
-
-
 }
 
 let theUrl = '';
@@ -79,30 +66,20 @@ function init(url) {
         // 调整vr视窗偏移量
         vr.effect.separation = 1.2;
     }
+
+    // vr 视频源拉取完成
     vr.loadProgressManager.onLoad = function () {
         localStorage.setItem("changeTo", false);
-        vr.video.setAttribute("loop", "loop");
-        vr.video.crossOrigin = "Anonymous";
 
-        if (window.parent.document.getElementsByClassName("layout")[0] && window.parent.document.getElementsByClassName("layout")[0].style) {
-            window.parent.document.getElementsByClassName("layout")[0].style.display = "none";
+        // 开屏页loading 消失 => 开屏页 go 显示
+        if ($('#openingPage .loading', parent.document) || $('#openingPage .loading', parent.document).css("display") == "block") {
+            $('#openingPage .loading', parent.document).hide();
+            setTimeout(() => {
+                $('#openingPage .go', parent.document).show();
+            }, 300);
         }
-        let urlCurrent = (window.parent.document.getElementsByClassName('ifm')[1] ? window.parent.document.getElementsByClassName('ifm')[1] : window.parent.document.getElementsByClassName('ifm')[0]).contentWindow.location.href;
-        // let urlC = Number(((urlCurrent.split('?')[1]).split('=')[1]).split('.')[0]);
-        let urlC = Number((urlCurrent.split('=')[1]).split('.')[0]);
-        if (window.parent.document.getElementById("pop").style.display == 'flex' || urlC == 1) {
-            console.log("Please click to play!");
-        }
-        //  else if (window.parent.document.getElementById("pop").style.display == 'none' && urlC !== 1) {
-        //     if (document.getElementsByClassName("playBtn1")[0].style.display == '' || document.getElementsByClassName("playBtn1")[0].style.display == 'block' && urlC !== 1) {
-        //         // document.getElementsByClassName("playBtn1")[0].click();// 自动play,放完且不会pause
-        //     }
-        //     // document.getElementsByClassName("playBtn1")[0].click();// 自动play,放完之后会pause
-
-        // }
     }
     vr.init(function () { });
-
 
     let sharpness = sessionStorage.getItem("sharpness");
     // 加载全景视频
@@ -191,7 +168,6 @@ function init(url) {
 
 
         animate();
-
         function animate() {
             requestAnimationFrame(animate);
             if (AVR.isCrossScreen()) {
@@ -207,11 +183,15 @@ function init(url) {
         }
     }
 
+    // 热点logic => Fn处理
+    getMarkIconObj();
+    // 陀螺仪选中功能 => css表现Fn
+    selected();
+
+    // 用于测试热点添加的事件
     // setInterval(() => {
     //     console.log(vr.video.currentTime);
     // }, 1000)
-    getMarkIconObj();
-    selected();
 }
 
 // 热点逻辑处理
@@ -288,7 +268,7 @@ function getMarkIconObj() {
         if (sessionStorage.getItem("key") == "1") {
             // firstPageAnimation();
         } else {
-            notFirstPageAnimation();
+            removeImgListAnimation();
         }
 
 
@@ -305,29 +285,29 @@ function getMarkIconObj() {
         whenView(popBeacon2_2, popBeaconTip2_2, 21, 29);
         whenView(popBeacon2_3, popBeaconTip2_3, 35, 47);
 
-        notFirstPageAnimation();
+        removeImgListAnimation();
     } else if (urlC == 3) {
         sessionStorage.setItem("key", "3");
         $('#scenarioName').text('实验室二楼');
         hideHotBeacon();
 
-        notFirstPageAnimation();
+        removeImgListAnimation();
     } else if (urlC == 4) {
         sessionStorage.setItem("key", "4");
         $('#scenarioName').text('零部件实验室');
         hideHotBeacon();
 
-        notFirstPageAnimation();
+        removeImgListAnimation();
     } else if (urlC == 5) {
         sessionStorage.setItem("key", "5");
         $('#scenarioName').text('TUV莱茵');
         hideHotBeacon();
 
-        notFirstPageAnimation();
+        removeImgListAnimation();
     } else {
         hideHotBeacon();
 
-        notFirstPageAnimation();
+        removeImgListAnimation();
     }
 }
 
@@ -380,14 +360,9 @@ function afterPopUp(index, assign) {
 }
 
 
-// 控制工具栏在(第一次进入第一页)的 动画执行
+// 控制每次进入video时 => 工具栏的动画执行
 function PageAnimation() {
-    setTimeout(() => {
-        $('#openingPage .loading', parent.document).hide();
-        $('#openingPage .go', parent.document).show();
-    }, 2000);
-
-    $('.go', parent.document).on('click', () => {
+    $('#openingPage .go', parent.document).on('click', () => {
         $('._toolBarBtn').click();
         $('._toolBarPV').css('animation', 'PV 0.5s ease 0.5s 1 forwards');
         $('._toolBarScenario').css('animation', 'scenario 0.5s ease 0.5s 1 forwards');
@@ -406,8 +381,9 @@ function PageAnimation() {
     })
 }
 
-// 控制工具栏在(非第一次进入第一页)和(进入非第一页)正常显示
-function notFirstPageAnimation() {
+// 控制 main 页面的 img-list 在切换清晰度的时候不会被唤起
+// 控制 test 页面在 video pause时刷新 => imgList始终显示
+function removeImgListAnimation() {
     $('.img-list', parent.document).css('animation', '');
 }
 
@@ -418,8 +394,10 @@ function selected() {
             let obj = $(this);
             if (obj.hasClass('active')) {
                 obj.removeClass('active');
+                resetEnable();
             } else {
                 obj.addClass('active');
+                resetDisabled();
             }
         })
     }
@@ -432,8 +410,27 @@ function turnOnGyro() {
     }
 }
 
+// 禁用 重置定位 
+function resetDisabled() {
+    let parent = $("._toolBarMore");
+    let child = $("<div></div>");
+    child.css({
+        "width": "100%", "height": "3rem", "position": "absolute", "bottom": "1.4rem"
+    });
+    child.attr("id", "shelter");
+    child.appendTo(parent);
+    $('._toolBarReset').css({ "background": "url('./img/home/reset_disable.png') no-repeat", "backgroundSize": "2.625rem 2.625rem" });
+}
 
-// 在test页面的工具栏绑定事件
+// 恢复 重置定位
+function resetEnable() {
+    if ($("#shelter")) {
+        $("#shelter").remove();
+    };
+    $('._toolBarReset').css({ "background": "url('./img/home/reset.png') no-repeat", "backgroundSize": "2.625rem 2.625rem" });
+}
+
+// 判断是否登录 给 test 页面的工具栏绑定事件
 function showPage() {
     $('._toolBarShare').on('click', () => {
         $('#shareInstructionPage', parent.document).show();
@@ -448,7 +445,7 @@ function showPage() {
     loginLogic();
 
     $('._toolBarBack').on('click', () => {
-        window.parent.location.href = 'http://ftplayer.cdflytu.com';
+        window.parent.location.href = 'https://ftplayer.cdflytu.com';
     });
 
 }
@@ -457,7 +454,6 @@ function showPage() {
 function fullScreen() {
     let ua = navigator.userAgent;
     if (ua.match(/iPhone|iPod/i) != null) {
-        console.log("iphone代码");
         $('._toolBarZoomIn').on('click', () => {
             $('#toast', parent.document).show();
             if (toast) {
@@ -468,7 +464,6 @@ function fullScreen() {
             }, 2500);
         })
     } else if (ua.match(/Android/i) != null) {
-        console.log("android代码");
         $('._toolBarZoomIn').on('click', () => {
             requestFullScreen();
 
@@ -511,34 +506,29 @@ function fullScreen() {
 }
 
 
-// ajax赋值
+// ajax赋值 => video访问量/点赞数
 function byValue() {
     $.ajax({
         type: "get",//这里还可以用于Post
-        url: baseUrl + "/api/video/video-page/videoVisitAmount/" + "?videoKey=22e3fae115bd48a8b84db72a57eee061",
+        url: baseUrl + "/api/video/video-page/videoVisitAmount/" + "?videoKey=" + videoKey,
         success: function (data) {
+            likedAmount = Number(data.result.likedAmount);
             $('._toolBarPV ._toolBarTotalPV').text("总访问量: " + data.result.totalAmount);
             $('._toolBarPV ._toolBarTodayPV').text("今日访问量: " + data.result.todayAmount);
-            $('._toolBarThumbUpBox ._toolBarThumbUpValue').text(data.result.likedAmount);
-            sessionStorage.setItem("videoLikeAmount", data.result.likedAmount);
+            $('._toolBarThumbUpBox ._toolBarThumbUpValue').text(likedAmount);
         },
-
         error: function (err) {
-            console.log(err)
+            console.log(err);
         }
     });
-
-    // $('._toolBarThumbUpBox ._toolBarThumbUpValue').text(123);
-    // $('._toolBarPV ._toolBarTotalPV').text("总访问量: " + 456456);
-    // $('._toolBarPV ._toolBarTodayPV').text("今日访问量: " + 456);
 }
 
 // test每次刷新的初始化动画处理
 function initTest() {
+    document.querySelector('html').style.fontSize = document.documentElement.clientWidth / 750 * 16 + 'px';
     $('#openingPage', parent.document).show();
     $('#openingPage .go', parent.document).hide();
     $('#openingPage .loading', parent.document).show();
-    document.querySelector('html').style.fontSize = document.documentElement.clientWidth / 750 * 16 + 'px';
 }
 
 
@@ -602,10 +592,10 @@ function loginLogic() {
             // 未登录
             if (!isLogin) {
                 $('._toolBarMsg').on('click', () => {
-                    window.parent.location.href = 'http://backtest.cdflytu.com/open/api/user/weixin/login/userInfoLogin' + '?from=' + linkUrl;
+                    window.parent.location.href = loginNeed + '?from=' + linkUrl;
                 });
                 $('._toolBarThumbUp').on('click', function () {
-                    window.parent.location.href = 'http://backtest.cdflytu.com/open/api/user/weixin/login/userInfoLogin' + '?from=' + linkUrl;
+                    window.parent.location.href = loginNeed + '?from=' + linkUrl;
                 })
             }
 
@@ -629,7 +619,7 @@ function loginLogic() {
 function thumbUpLogic() {
     $.ajax({
         type: "get",
-        url: loginBaseUrl + '/api/video/video-page/isVideoLike/' + '?videoKey=22e3fae115bd48a8b84db72a57eee061',
+        url: loginBaseUrl + '/api/video/video-page/isVideoLike/' + "?videoKey=" + videoKey,
         async: false,
         beforeSend: function (request) {
             request.setRequestHeader("token", getCookie("token"));
@@ -659,15 +649,15 @@ function thumbUpLogic() {
 }
 
 
-// 点赞选择发起哪种请求
+// 点赞 => 选择发起哪种请求
 function thumbUpSelect() {
     $('._toolBarThumbUp').on('click', function () {
-        if (sessionStorage.getItem("videoLike") == "false") {
+        if (sessionStorage.getItem("videoLike") === "false") {
             $.ajax({
                 type: "post",
                 url: loginBaseUrl + '/api/video/video-page/addVideoLike/',
                 contentType: "application/json",
-                data: JSON.stringify({ "videoKey": "22e3fae115bd48a8b84db72a57eee061" }),
+                data: JSON.stringify({ "videoKey": videoKey }),
                 async: false,
                 beforeSend: function (request) {
                     request.setRequestHeader("token", getCookie("token"));
@@ -681,8 +671,8 @@ function thumbUpSelect() {
                         } else {
                             $('._toolBarThumbUp').addClass('active');
                         }
-
-                        $('._toolBarThumbUpBox ._toolBarThumbUpValue').text(Number(sessionStorage.getItem("videoLikeAmount"))+1 );
+                        likedAmount += 1;
+                        $('._toolBarThumbUpBox ._toolBarThumbUpValue').text(likedAmount);
                         sessionStorage.setItem("videoLike", true);
                     }
                 },
@@ -696,7 +686,7 @@ function thumbUpSelect() {
                 type: "post",
                 url: loginBaseUrl + '/api/video/video-page/removeVideoLike/',
                 contentType: "application/json",
-                data: JSON.stringify({ "videoKey": "22e3fae115bd48a8b84db72a57eee061" }),
+                data: JSON.stringify({ "videoKey": videoKey }),
                 async: false,
                 beforeSend: function (request) {
                     request.setRequestHeader("token", getCookie("token"));
@@ -707,9 +697,9 @@ function thumbUpSelect() {
                     if (removeThumbUp) {
                         if ($('._toolBarThumbUp').hasClass('active')) {
                             $('._toolBarThumbUp').removeClass('active');
-                        } else {
                         }
-                        $('._toolBarThumbUpBox ._toolBarThumbUpValue').text(Number(sessionStorage.getItem("videoLikeAmount")));
+                        likedAmount -= 1;
+                        $('._toolBarThumbUpBox ._toolBarThumbUpValue').text(likedAmount);
                         sessionStorage.setItem("videoLike", false);
                     }
                 },
@@ -720,3 +710,22 @@ function thumbUpSelect() {
         }
     })
 }
+
+// pop 赋值
+var title = [];
+title[0] = '莱茵集团';
+title[1] = '环境测试';
+title[2] = '稳态模拟器';
+title[3] = '机械载荷测试';
+
+var imgUrl = [];
+imgUrl[0] = ['img/pop/laiyin1.jpg', 'img/pop/laiyin2.jpg', 'img/pop/laiyin3.jpg'];
+imgUrl[1] = ['img/pop/laiyin4.jpg'];
+imgUrl[2] = ['img/pop/laiyin5.jpg'];
+imgUrl[3] = ['img/pop/laiyin6.jpg'];
+
+var text = [];
+text[0] = '自1872年成立以来，坚持为解决人类、环境和科技互动过程中出现的挑战开发安全持续的解决方案。德国莱茵TüV集团作为一个独立、公正和专业的机构，长期致力于营造一个同时符合人类和环境需要的美好未来。德国莱茵TÜV集团公司总部位于科隆，在全球61个国家设有490家分支机构，员工总数为17000人。集团共包含120多家公司。其中运营控股公司是TÜV Rheinland AG，TÜV Rheinland Berlin BrandenburgPfalz e.V.是单一股东。';
+text[1] = '环境测试区可开展温度循环、光伏PID测试等服务，能模拟组件在极端恶劣条件下的工作表现。';
+text[2] = '全亚洲最大的太阳能稳态模拟器，最多能容纳20块太阳能组建同时进行光筛测试，也能模拟出组建最真实的工作状态。';
+text[3] = '机械载荷测试是为了确保光伏电站的可靠性，可测试组件在受到暴风、积雪等情况下的受力，并检测组件是否能够承受高强度的机械载荷，最高测试压强可达10000Pa。';

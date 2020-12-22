@@ -465,8 +465,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
     }
 
     function btnInactive(obj) {
-      obj.style.borderBottom = "none";
-
+      // obj.style.borderBottom = "none";
       if (that.cameraEvt.controlGroup.length) {
         var pointObj = that.cameraEvt.controlGroup.getObjectByName("__focus");
         pointObj.visible = false;
@@ -1504,7 +1503,6 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 
         if (AVR.isMobileDevice() && AVR.isCrossScreen()) {
           that.cameraTexture.repeat.x = width / (2 * that.video.videoWidth);
-          console.log(that.cameraTexture.repeat.x);
           that.effect.setSize(width, height);
           that.effect.render(that.scene, that.camera);
         } else {
@@ -1584,9 +1582,10 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
       renderer.autoClear = false;
 
       this.setSize = function (width, height) {
+        // 横屏
         // 关闭横屏状态下两个屏幕的effect
-        _width = width; // _width = width / 2;
-
+        // _width = width;
+        _width = width / 2;
         _height = height;
         renderer.setSize(width, height);
       };
