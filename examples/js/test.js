@@ -405,7 +405,7 @@ function selected() {
 
 // 开启陀螺仪总开关
 function turnOnGyro() {
-    if (sessionStorage.getItem("isTurnOn") == "true") {
+    if (sessionStorage.getItem("isTurnOn") === "true") {
         $('._toolBarGyro').click();
     }
 }
@@ -592,9 +592,11 @@ function loginLogic() {
             // 未登录
             if (!isLogin) {
                 $('._toolBarMsg').on('click', () => {
+                    $("#signIn", parent.document).show();
                     window.parent.location.href = loginNeed + '?from=' + linkUrl;
                 });
                 $('._toolBarThumbUp').on('click', function () {
+                    $("#signIn", parent.document).show();
                     window.parent.location.href = loginNeed + '?from=' + linkUrl;
                 })
             }

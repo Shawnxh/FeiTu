@@ -25,7 +25,7 @@ $.ajax({
     async: false,
     cache: false,
     success: function (data) {
-        console.log(data.result);
+        // console.log(data.result);
         if (data.code == 200) {
             $appid = data.result.appId; // appid
             $timestamp = data.result.timestamp; // timestamp

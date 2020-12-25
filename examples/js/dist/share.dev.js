@@ -19,8 +19,7 @@ $.ajax({
   async: false,
   cache: false,
   success: function success(data) {
-    console.log(data.result);
-
+    // console.log(data.result);
     if (data.code == 200) {
       $appid = data.result.appId; // appid
 

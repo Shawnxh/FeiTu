@@ -14,12 +14,14 @@
 <body>
     <div id="app">
         <iframe class="ifm" id="ifm" name="ifm" :src="'./test.html?video='+n+'.mp4'" frameborder="0"
-            class="{n==isBefore?'before':''}" v-if="showList==n" v-for="n in 13">
+            class="{n==isBefore?'before':''}" v-if="showList==n" v-for="n in 10">
         </iframe>
         <!-- 土司提示 -->
         <div id="toast">Iphone设备无法使用!</div>
+        <div id="signIn">正在登录中,请稍后...</div>
         <!-- comment页面 -->
-        <div id="commentPage" ref="commentPage">
+        <section id="commentPage" ref="commentPage">
+            <div id="releaseFeedback"></div>
             <div class="msg">
                 <div class="header">
                     <div class="totalComment">评论数: {{commentCount}}</div>
@@ -46,15 +48,14 @@
                     </div>
                 </div>
                 <div class="footer">
-                    <textarea name="" id="" cols="30" rows="5" maxlength="" placeholder="输入评论..."></textarea>
+                    <textarea name="" id="" cols="25" rows="3" maxlength="" placeholder="既然来了,总要留下点什么..."></textarea>
                     <!-- <input type="text" placeholder="输入评论..."> -->
                     <div class="release" @click="sendComment">发布</div>
                 </div>
             </div>
-        </div>
-
+        </section>
         <!-- 清晰度页面 -->
-        <div id="definitionPage" ref="definitionPage">
+        <section id="definitionPage" ref="definitionPage">
             <div class="top">清晰度</div>
             <div class="center">
                 <div class="specific active" ref="k4">4 K</div>
@@ -62,9 +63,9 @@
                 <div class="specific" ref="p720">720 P</div>
             </div>
             <div class="bottom" ref="closeDefinition">返回 <img src="./img/home/return.png" alt=""></div>
-        </div>
+        </section>
         <!-- 设置页面 -->
-        <div id="settingPage" ref="settingPage">
+        <section id="settingPage" ref="settingPage">
             <div class="top">设置</div>
             <div class="center">
                 <div class="gyroFont">陀螺仪默认</div>
@@ -74,9 +75,9 @@
                 </div>
             </div>
             <div class="bottom" ref="closeSetting">返回 <img src="./img/home/return.png" alt=""></div>
-        </div>
+        </section>
         <!-- Menu页 -->
-        <div id="menu" ref="menu">
+        <section id="menu" ref="menu">
             <div class="top" ref="login">
                 <div class="avatar"><img src="./img/home/avatar.png" alt=""></div>
                 <div class="nickName">未登录</div>
@@ -87,7 +88,7 @@
                     <div class="desc">设置</div>
                 </div>
                 <div class="definition" ref="definition">
-                    <div class="imgBox fontBox">4K</div>
+                    <div class="imgBox fontBox">HD</div>
                     <div class="desc">清晰度</div>
                 </div>
                 <div class="about">
@@ -96,20 +97,20 @@
                 </div>
             </div>
             <div class="bottom" ref="closeMenu"><img src="./img/home/closeMenu.png" alt=""></div>
-        </div>
+        </section>
         <!-- 分享指示页 -->
-        <div id="shareInstructionPage" ref="shareInstructionPage">
+        <section id="shareInstructionPage" ref="shareInstructionPage">
             <div class="top"></div>
             <div class="okay" ref="okay"></div>
-        </div>
+        </section>
         <!-- 开屏页 -->
-        <div id="openingPage">
+        <section id="openingPage">
             <div class="head" ref="head"></div>
             <div class="name">德国莱茵集团</div>
             <div class="loading"></div>
             <div class="go" ref="go">开启全景之旅</div>
             <div class="support">飞图科技支持</div>
-        </div>
+        </section>
         <!-- 缩略图 -->
         <div class="img-list" v-show="isShow" ref="imglist">
             <div class="imgNameContainer" v-for="items in Lists">

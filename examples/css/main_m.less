@@ -5,7 +5,8 @@
   // box-sizing: border-box;
 }
 
-#toast {
+#toast,
+#signIn {
   display: none;
   width: 20rem;
   height: 3rem;
@@ -20,7 +21,6 @@
   background-color: rgba(255, 255, 255, .42);
   text-align: center;
   white-space: nowrap;
-  animation: toast 2.5s ease 1;
 }
 
 #commentPage {
@@ -32,6 +32,24 @@
   left: 0;
   z-index: 10;
   overflow: hidden;
+
+  #releaseFeedback {
+    display: none;
+    width: fit-content;
+    height: 3rem;
+    padding: 0.5rem 2rem;
+    line-height: 3rem;
+    border-radius: 5px;
+    position: absolute;
+    left: 50%;
+    top: 80%;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+    color: #fff;
+    background-color: rgba(10, 159, 245, 0.945);
+    white-space: nowrap;
+    font-size: 2rem;
+  }
 
   .msg {
     width: 100%;
@@ -56,6 +74,7 @@
       .totalComment {
         width: fit-content;
         height: 2rem;
+        line-height: 2rem;
         position: absolute;
         left: 2.0625rem;
         top: 50%;
@@ -76,7 +95,13 @@
       width: 100%;
       // height: 41.9375rem;
       height: 34rem;
-      overflow-y: scroll;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      /* 滚动回弹 ios5+ */
+      background-image: url("../../img/home/no_comments.png");
+      background-repeat: no-repeat;
+      background-position: center 2rem;
+      background-size: 8rem 2rem;
 
       #listBox {
         width: 100%;
@@ -84,6 +109,8 @@
       }
 
       >div>div {
+        // 挡掉 暂无评论 的的背景图片
+        background-color: #fff;
         width: 100%;
         // height: 11rem;
         height: auto;
@@ -182,7 +209,8 @@
       }
 
       >div>div:last-child {
-        margin-bottom: 8.0625rem;
+        // margin-bottom: 8.0625rem;
+        margin-bottom: 0.0625rem;
       }
 
     }
@@ -190,35 +218,42 @@
     .footer {
       width: 100%;
       height: 8.0625rem;
-      position: absolute;
+      position: relative;
       left: 0;
       bottom: 0;
-      border-top: 1px solid rgba(0, 0, 0, .2);
+      border-top: 0.5px solid rgb(235, 235, 235);
       background-color: rgb(255, 255, 255);
 
       textarea {
         // width: 37rem;
         width: 75%;
-        height: 5.375rem;
-        line-height: 5.375rem;
+        // 允许在长单词内换行
+        word-break: break-all;
         position: absolute;
-        left: 1.9375rem;
+        left: 3%;
         top: 50%;
         transform: translateY(-50%);
         background-color: rgba(0, 0, 0, .05);
-        border-radius: 43px;
-        border: 0;
-        outline: none; // 去除选中状态边框
-        resize: none; // 禁止拖拽伸缩
-        padding-left: 1.8125rem;
+        border-radius: 10px;
+        // 去除边框
+        border: none;
+        // 去除选中状态边框
+        outline: none;
+        // 禁止拖拽伸缩
+        resize: none;
+        padding: 0 1.2rem;
+        font-size: 1.8rem;
+        //字间距 
+        letter-spacing: 0.1em;
       }
 
       .release {
         white-space: nowrap;
         width: 3.8125rem;
         height: 1.9375rem;
+        line-height: 1.9375rem;
         position: absolute;
-        right: 1.9375rem;
+        right: 3%;
         top: 50%;
         transform: translateY(-50%);
         font-size: 2rem;

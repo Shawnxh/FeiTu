@@ -383,7 +383,7 @@ function selected() {
 
 
 function turnOnGyro() {
-  if (sessionStorage.getItem("isTurnOn") == "true") {
+  if (sessionStorage.getItem("isTurnOn") === "true") {
     $('._toolBarGyro').click();
   }
 } // 禁用 重置定位 
@@ -574,9 +574,11 @@ function loginLogic() {
 
       if (!isLogin) {
         $('._toolBarMsg').on('click', function () {
+          $("#signIn", parent.document).show();
           window.parent.location.href = loginNeed + '?from=' + linkUrl;
         });
         $('._toolBarThumbUp').on('click', function () {
+          $("#signIn", parent.document).show();
           window.parent.location.href = loginNeed + '?from=' + linkUrl;
         });
       } // 登录成功

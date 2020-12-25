@@ -55,7 +55,8 @@ var vm = null;
                 }
                 // 防止 PC 端打开行为 => 跳转 PC 端(必填)
                 else {
-                    window.location.href = "http://192.168.100.70/laiyin_pc/examples/main.html";
+                    window.location.href = "http://192.168.100.70/PC/laiyin_pc/examples/main.html";
+                    // window.location.href = "https://ftplayer.cdflytu.com/laiyinpc/examples/main.html";
                 }
             },
             created: function () {
@@ -85,7 +86,7 @@ var vm = null;
                     if (e.storageArea.changeTo == "true") {
                         // let currentSrc = (document.getElementsByClassName('ifm')[1] ? window.parent.document.getElementsByClassName('ifm')[1] : window.parent.document.getElementsByClassName('ifm')[0]).src;
                         // that.showList = Number((currentSrc.split('=')[1]).split('.')[0]);
-                        if (that.showList + 1 < 14) {
+                        if (that.showList + 1 < 10) {
                             that.changeSelect(that.showList + 1);
                         }
                     }
@@ -104,6 +105,7 @@ var vm = null;
                 // 未登录
                 if (!that.isLogin) {
                     this.$refs.login.onclick = () => {
+                        $("#signIn").show();
                         window.location.href = this.loginNeed + '?from=' + that.encodeUrl;
                     }
                 }
@@ -190,7 +192,8 @@ var vm = null;
                     let that = this;
                     $("#commentPage .detail").scroll(function () {
                         let a = document.getElementById("listBox");
-                        if ($(this).scrollTop() + $(this).height() - 60 > a.offsetHeight) {
+                        // 距离底部还有 20px 的时候启动
+                        if (($(this).scrollTop() + $(this).height() + 20) > a.offsetHeight) {
                             that.pageNo += 1;
                             $.ajax({
                                 type: "get",
@@ -268,7 +271,7 @@ var vm = null;
                                 request.setRequestHeader("token", that.$options.methods.getCookie("token"));
                             },
                             success: function (res) {
-                                if (res.result) {
+                                if (res.result.success == true) {
                                     $("#commentPage .footer textarea").val("");
                                     // 重新拉取评论
                                     that.fillCommentList();
@@ -276,6 +279,21 @@ var vm = null;
                                     that.pageNo = 1;
                                     // 发布之后回到顶部
                                     $("#commentPage .detail").scrollTop(0);
+
+                                    let releaseStatus = $("#commentPage #releaseFeedback");
+                                    if (res.result.publishStatus === "apply") {
+                                        releaseStatus.text("评论已经提交,等待审核中!")
+                                        releaseStatus.show();
+                                        setTimeout(() => {
+                                            releaseStatus.hide();
+                                        }, 2000)
+                                    } else if (res.result.publishStatus === "published") {
+                                        releaseStatus.text("评论发布成功!")
+                                        releaseStatus.show();
+                                        setTimeout(() => {
+                                            releaseStatus.hide();
+                                        }, 2000)
+                                    }
                                 }
                             },
                             error: function (err) {
