@@ -104,7 +104,7 @@ function init(url) {
 
         function hotIconEvt() {
             if (switchContainer && switchContainer.type == 'fromPopUp1') {
-                showPop(1);
+                showVideoPop(1);
             } else if (switchContainer && switchContainer.type == 'fromBeacon2_left') {
                 localStorage.setItem("changeTo", true);
             } else if (switchContainer && switchContainer.type == 'fromPopUp2_1') {
@@ -320,19 +320,56 @@ function getParam(url, name) {
     return "";
 }
 
-
-function continuePlay() {
-    document.getElementById("pop1").style.cssText = "display:none;";
-    document.getElementById("pop2").style.cssText = "display:none;";
-    document.getElementById("pop3").style.cssText = "display:none;";
+/*
+ ===========================
+ Pop Beginning
+ ===========================
+ */
+function closeVideoPop(i) {
+    $("#imgListShelter", parent.document).hide();
+    let videoPopId = "#videoPop" + i;
+    $(videoPopId).hide();
+    // 触发播放
+    if (sessionStorage.getItem("videoStatus") === "pause") {
+        $('._toolBarBtn').click();
+    }
 }
-
+function showVideoPop(i) {
+    let obj = $("#imgListShelter", parent.document);
+    let videoPopId = "#videoPop" + i;
+    obj.show();
+    obj.on("click", () => {
+        closeVideoPop(i);
+    })
+    if (sessionStorage.getItem("videoStatus") === "play") {
+        $('._toolBarBtn').click();
+        $(videoPopId).show();
+    } else {
+        $(videoPopId).show();
+    }
+}
+function closePop(i) {
+    let popId = "#pop" + i;
+    $(popId).hide();
+    if (sessionStorage.getItem("videoStatus") === "pause") {
+        $('._toolBarBtn').click();
+    }
+}
 // i : 显示第几个轮播图demo
 function showPop(i) {
-    // $(".playBtn1")[0].click();
     let popId = "#pop" + i;
-    $(popId).css('display', 'flex');
+    if (sessionStorage.getItem("videoStatus") === "play") {
+        $('._toolBarBtn').click();
+        $(popId).show();
+    } else {
+        $(popId).show();
+    }
 }
+/*
+ ===========================
+ Pop Ending
+ ===========================
+ */
 
 /*
  *

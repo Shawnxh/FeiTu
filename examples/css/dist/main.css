@@ -179,9 +179,6 @@
   right: 0;
   bottom: 0;
 }
-#commentPage .msg .detail > div > div:last-child {
-  margin-bottom: 0.0625rem;
-}
 #commentPage .msg .footer {
   width: 100%;
   height: 8.0625rem;
@@ -576,6 +573,17 @@
   color: #fff;
   font-size: 16px;
 }
+#imgListShelter {
+  display: none;
+  width: 100%;
+  height: 12.125rem;
+  position: fixed;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  z-index: 10;
+  background-color: rgba(22, 22, 22, 0.719);
+}
 .img-list {
   padding-left: 1.0625rem;
   position: fixed;
@@ -618,9 +626,6 @@ iframe {
   width: 100%;
   height: 100%;
   z-index: 1;
-}
-iframe.before {
-  z-index: 2;
 }
 .layer {
   position: fixed;

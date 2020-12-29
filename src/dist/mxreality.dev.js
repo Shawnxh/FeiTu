@@ -473,28 +473,18 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
     }
 
     that._play = function () {
+      sessionStorage.setItem("videoStatus", "play");
       window.parent.document.getElementsByClassName("img-list")[0].style.display = "none";
       toolBar.btn1.style.background = "url(./img/home/pause.png) no-repeat";
       toolBar.btn1.style.backgroundSize = "5.5rem 5.5625rem";
       toolBar.btn1.style.bottom = "3.875rem";
       toolBar.back.style.bottom = "5rem";
       toolBar.menu.style.bottom = "5rem";
-      var another = document.getElementById('another');
-
-      if (another) {
-        another.className = 'fade_out';
-        clearTimeout();
-        setTimeout(function () {
-          // 以下三种实现的都是同样的效果
-          another.remove(); // 移除元素
-          // another.setAttribute("hidden","hidden"); // 隐藏元素
-          // another.style.display='none';
-        }, 800);
-      } // toolBar.btn.innerHTML = AVR.playerIcon.pauseSvg;
-
+      var another = document.getElementById('another'); // toolBar.btn.innerHTML = AVR.playerIcon.pauseSvg;
     };
 
     that._pause = function () {
+      sessionStorage.setItem("videoStatus", "pause");
       window.parent.document.getElementsByClassName("img-list")[0].style.display = "block";
       toolBar.btn1.style.background = "url(./img/home/play.png) no-repeat";
       toolBar.btn1.style.backgroundSize = "5.5rem 5.5625rem";

@@ -5,10 +5,10 @@
     <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
     <title>德国莱茵集团</title>
     <!-- 暂时没有favicon -->
-    <!-- <link rel="shortcut icon" type="image/x-icon" href="favicon.ico"/> -->
+    <link rel="shortcut icon" type="images/x-icon" href="#"/>
     <!-- iOS 7.1 的 Safari 中为 meta 标签新增 minimal-ui 属性，让网页在加载时便可隐藏顶部的地址栏与底部的导航栏 -->
     <meta name="viewport" content="width=device-width,initial-scale=1, maximum-scale=1, user-scalable=no">
-    <link rel="stylesheet" href="./css/dist/main_m.css" />
+    <link rel="stylesheet" href="./css/dist/main.css" />
 </head>
 
 <body>
@@ -111,6 +111,8 @@
             <div class="go" ref="go">开启全景之旅</div>
             <div class="support">飞图科技支持</div>
         </section>
+        <!-- 缩略图遮挡层 => videopop 全屏弹窗时,imglist在父层级 -->
+        <div id="imgListShelter"></div>
         <!-- 缩略图 -->
         <div class="img-list" v-show="isShow" ref="imglist">
             <div class="imgNameContainer" v-for="items in Lists">

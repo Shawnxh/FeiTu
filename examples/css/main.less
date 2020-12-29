@@ -208,10 +208,9 @@
 
       }
 
-      >div>div:last-child {
-        // margin-bottom: 8.0625rem;
-        margin-bottom: 0.0625rem;
-      }
+      // >div>div:last-child {
+      //   margin-bottom: 0.0625rem;
+      // }
 
     }
 
@@ -678,6 +677,18 @@
   }
 }
 
+#imgListShelter {
+  display: none;
+  width: 100%;
+  height: 12.125rem;
+  position: fixed;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  z-index: 10;
+  background-color: rgba(22, 22, 22, 0.719);
+}
+
 .img-list {
   padding-left: 1.0625rem;
   position: fixed;
@@ -726,9 +737,9 @@ iframe {
   height: 100%;
   z-index: 1;
 
-  &.before {
-    z-index: 2;
-  }
+  // &.before {
+  //   z-index: 2;
+  // }
 }
 
 .layer {

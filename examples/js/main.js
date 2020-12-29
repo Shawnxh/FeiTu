@@ -16,6 +16,10 @@ var vm = null;
                 loginNeed: "https://backtest.cdflytu.com/open/api/user/weixin/login/userInfoLogin/",
                 // 评论页 => 页码
                 pageNo: 1,
+                // 评论总页数
+                pageTotal: 0,
+                // 评论页 => 单页评论量
+                pageSize: 15,
                 // 评论列表数据
                 commentList: [],
                 // 评论总条数
@@ -99,6 +103,11 @@ var vm = null;
                     this.selectDefinition();
                     this.turnOnGyro();
                 }
+
+                // 浏览器离线(断网行为)
+                window.addEventListener('offline', function () {
+                    alert('网络连接断开！');
+                })
             },
             mounted: function () {
                 let that = this;
@@ -190,14 +199,14 @@ var vm = null;
                 // 上拉加载
                 loadMore() {
                     let that = this;
-                    $("#commentPage .detail").scroll(function () {
-                        let a = document.getElementById("listBox");
-                        // 距离底部还有 20px 的时候启动
-                        if (($(this).scrollTop() + $(this).height() + 20) > a.offsetHeight) {
+                    let obj = document.getElementById("listBox");
+                    $("#commentPage .detail").on("touchmove", function () {
+                        // 距离底部还有 60px 的时候启动
+                        if (($(this).scrollTop() + $(this).height() + 60) > obj.offsetHeight && that.pageNo < Number(that.pageTotal)) {
                             that.pageNo += 1;
                             $.ajax({
                                 type: "get",
-                                url: that.loginBaseUrl + '/api/video/video-page/videoComment/' + '?videoKey=' + that.videoKey + '&pageNo=' + that.pageNo + '&pageSize=5',
+                                url: that.loginBaseUrl + '/api/video/video-page/videoComment/' + '?videoKey=' + that.videoKey + '&pageNo=' + that.pageNo + '&pageSize=' + that.pageSize,
                                 async: false,
                                 beforeSend: function (request) {
                                     request.setRequestHeader("token", that.getCookie("token"));
@@ -212,11 +221,24 @@ var vm = null;
                                     })
                                     that.commentList = that.commentList.concat(b);
                                     that.commentCount = res.result.page.totalNum;
+                                    that.pageTotal = res.result.page.totalPage;
                                 },
                                 error: function (err) {
                                     console.log(err)
                                 }
-                            });
+                            })
+                        }
+                    });
+
+                    // 所有评论 all-in => 继续上滑
+                    $("#commentPage .detail").on("touchend", function () {
+                        if (($(this).scrollTop() + $(this).height()) === obj.offsetHeight && that.pageNo === Number(that.pageTotal)) {
+                            let releaseStatus = $("#commentPage #releaseFeedback");
+                            releaseStatus.text("没有更多内容啦!");
+                            releaseStatus.show();
+                            setTimeout(() => {
+                                releaseStatus.hide();
+                            }, 1200);
                         }
                     });
                 },
@@ -225,13 +247,14 @@ var vm = null;
                     let that = this;
                     $.ajax({
                         type: "get",
-                        url: this.loginBaseUrl + '/api/video/video-page/videoComment/' + '?videoKey=' + that.videoKey + '&pageNo=1' + '&pageSize=5',
+                        url: this.loginBaseUrl + '/api/video/video-page/videoComment/' + '?videoKey=' + that.videoKey + '&pageNo=1' + '&pageSize=' + that.pageSize,
                         async: false,
                         cache: false,
                         beforeSend: function (request) {
                             request.setRequestHeader("token", that.getCookie("token"));
                         },
                         success: function (res) {
+                            console.log(res);
                             // 评论解码
                             let newCommentList = res.result.list.map((item) => {
                                 let commentCont = item.commentContent;
@@ -240,6 +263,7 @@ var vm = null;
                             })
                             that.commentList = newCommentList;
                             that.commentCount = res.result.page.totalNum;
+                            that.pageTotal = res.result.page.totalPage;
                         },
                         error: function (err) {
                             console.log(err)
