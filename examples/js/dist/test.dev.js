@@ -20,7 +20,12 @@ var scene = null;
 var renderer = null;
 var container = null; // 存取iphone端土司提示定时器 => 用于优化对用户不断点击产生过多一次性定时器的的问题
 
-var toast;
+var toast; // 获取currentUrl,用于判断 hotBeacon的显示与隐藏
+
+var urlCurrent = $("iframe", parent.document).attr("src"); // let urlC = Number(((urlCurrent.split('?')[1]).split('=')[1]).split('.')[0]);
+
+var urlC = Number(urlCurrent.split('=')[1].split('.')[0]);
+console.log(urlC);
 
 window.onload = function () {
   initTest();
@@ -173,12 +178,16 @@ function init(url) {
     }, false);
     var util = new VRUtils(vr); // 1.video
 
-    util.markIcon("textures/discount.png", new THREE.Vector3(-4, 0, 12), 'popUp1', '莱茵集团', 1, 1); // 2.video
+    if (urlC === 1) {
+      util.markIcon("textures/discount.png", new THREE.Vector3(-4, 0, 12), 'popUp1', '莱茵集团', 1, 1);
+    } // 2.video
+    else if (urlC === 2) {
+        util.markIcon("textures/right.png", new THREE.Vector3(-5, -2, 7), 'beacon2_left', '实验室二楼', 1, 1);
+        util.markIcon("textures/discount.png", new THREE.Vector3(-5, 0, 10), 'popUp2_1', '环境测试', 1, 1);
+        util.markIcon("textures/discount.png", new THREE.Vector3(5, 0, 10), 'popUp2_2', '稳态模拟器', 1, 1);
+        util.markIcon("textures/discount.png", new THREE.Vector3(-6, -1, 10), 'popUp2_3', '机械载荷测试', 1, 1);
+      }
 
-    util.markIcon("textures/right.png", new THREE.Vector3(-5, -2, 7), 'beacon2_left', '实验室二楼', 1, 1);
-    util.markIcon("textures/discount.png", new THREE.Vector3(-5, 0, 10), 'popUp2_1', '环境测试', 1, 1);
-    util.markIcon("textures/discount.png", new THREE.Vector3(5, 0, 10), 'popUp2_2', '稳态模拟器', 1, 1);
-    util.markIcon("textures/discount.png", new THREE.Vector3(-6, -1, 10), 'popUp2_3', '机械载荷测试', 1, 1);
     animate();
   } // 热点logic => Fn处理
 
@@ -204,13 +213,7 @@ function getMarkIconObj() {
   var popBeaconTip2_1 = document.getElementById("popUp2_1");
   var popBeaconTip2_2 = document.getElementById("popUp2_2");
   var popBeaconTip2_3 = document.getElementById("popUp2_3");
-  var hotBeaconTip2_left = document.getElementById("beacon2_left"); // 获取currentUrl,用于判断 hotBeacon的显示与隐藏
-
-  var urlCurrent = (window.parent.document.getElementsByClassName('ifm')[1] ? window.parent.document.getElementsByClassName('ifm')[1] : window.parent.document.getElementsByClassName('ifm')[0]).contentWindow.location.href; // let urlC = Number(((urlCurrent.split('?')[1]).split('=')[1]).split('.')[0]);
-
-  var urlC = Number(urlCurrent.split('=')[1].split('.')[0]);
-  console.log(urlC); // console.log(urlCurrent);
-  // 控制热点在任意时间出现,传入三个参数
+  var hotBeaconTip2_left = document.getElementById("beacon2_left"); // 控制热点在任意时间出现,传入三个参数
   // beacon: 热点dom对象;  tip:对应dom的tip文字注释; 
   // seconds1:显示时间(s为单位)
   // seconds2:隐藏时间
@@ -233,21 +236,25 @@ function getMarkIconObj() {
 
 
   function hideHotBeacon() {
-    popBeacon1.visible = false;
-    popBeaconTip1.style.position = "";
-    hotBeacon2_left.visible = false;
-    hotBeaconTip2_left.style.position = "";
-    popBeacon2_1.visible = false;
-    popBeaconTip2_1.style.position = "";
-    popBeacon2_2.visible = false;
-    popBeaconTip2_2.style.position = "";
-    popBeacon2_3.visible = false;
-    popBeaconTip2_3.style.position = "";
+    if (urlC === 1) {
+      popBeacon1.visible = false;
+      popBeaconTip1.style.position = "";
+    } else if (urlC === 2) {
+      hotBeacon2_left.visible = false;
+      hotBeaconTip2_left.style.position = "";
+      popBeacon2_1.visible = false;
+      popBeaconTip2_1.style.position = "";
+      popBeacon2_2.visible = false;
+      popBeaconTip2_2.style.position = "";
+      popBeacon2_3.visible = false;
+      popBeaconTip2_3.style.position = "";
+    }
   }
 
   if (urlC == 1) {
-    $('#scenarioName').text('莱茵光伏实验室');
-    afterPopUp(0, 1);
+    fillScenarioName(); // fillPopUp(0, 1);
+
+    fillVideoPopUp(0, 1);
     hideHotBeacon();
     whenView(popBeacon1, popBeaconTip1, 25, 31);
 
@@ -257,10 +264,10 @@ function getMarkIconObj() {
     }
   } else if (urlC == 2) {
     sessionStorage.setItem("key", "2");
-    $('#scenarioName').text('实验室一楼');
-    afterPopUp(1, 1);
-    afterPopUp(2, 2);
-    afterPopUp(3, 3);
+    fillScenarioName();
+    fillPopUp(1, 1);
+    fillPopUp(2, 2);
+    fillPopUp(3, 3);
     hideHotBeacon();
     whenView(hotBeacon2_left, hotBeaconTip2_left, 75, 91);
     whenView(popBeacon2_1, popBeaconTip2_1, 2, 17);
@@ -269,17 +276,17 @@ function getMarkIconObj() {
     removeImgListAnimation();
   } else if (urlC == 3) {
     sessionStorage.setItem("key", "3");
-    $('#scenarioName').text('实验室二楼');
+    fillScenarioName();
     hideHotBeacon();
     removeImgListAnimation();
   } else if (urlC == 4) {
     sessionStorage.setItem("key", "4");
-    $('#scenarioName').text('零部件实验室');
+    fillScenarioName();
     hideHotBeacon();
     removeImgListAnimation();
   } else if (urlC == 5) {
     sessionStorage.setItem("key", "5");
-    $('#scenarioName').text('TUV莱茵');
+    fillScenarioName();
     hideHotBeacon();
     removeImgListAnimation();
   } else {
@@ -352,12 +359,6 @@ function showPop(i) {
   }
 }
 /*
- ===========================
- Pop Ending
- ===========================
- */
-
-/*
  *
  * Note:弹窗的内容填充发生在页面初始化时
  * Index:图片数据在数组中的的索引值
@@ -366,7 +367,7 @@ function showPop(i) {
  */
 
 
-function afterPopUp(index, assign) {
+function fillPopUp(index, assign) {
   // which存储轮播图内部相关dom的索引,即 索引= 实际的pop在pop序列中的位置 -1
   var which = assign - 1;
   var titleID = "#title" + assign;
@@ -385,6 +386,24 @@ function afterPopUp(index, assign) {
 
     _parent.appendTo(ul);
   }
+}
+
+function fillVideoPopUp(index, assign) {
+  var videoPopID = "#videoPop" + assign + " .video";
+  $(videoPopID).attr({
+    "src": videoUrl[index],
+    "poster": videoPoster[index]
+  });
+}
+/*
+ ===========================
+ Pop Ending
+ ===========================
+ */
+
+
+function fillScenarioName() {
+  $('#scenarioName').text(scenarioName[urlC - 1]);
 } // 控制每次进入video时 => 工具栏的动画执行
 
 
@@ -739,21 +758,25 @@ function thumbUpSelect() {
       });
     }
   });
-} // pop 赋值
+}
 
+var scenarioName = new Array("莱茵光伏实验室", "实验室一楼", "实验室二楼", "零部件实验室", "TUV莱茵"); // pop 赋值
 
-var title = [];
+var title = new Array();
 title[0] = '莱茵集团';
 title[1] = '环境测试';
 title[2] = '稳态模拟器';
 title[3] = '机械载荷测试';
-var imgUrl = [];
+var imgUrl = new Array();
 imgUrl[0] = ['img/pop/laiyin1.jpg', 'img/pop/laiyin2.jpg', 'img/pop/laiyin3.jpg'];
 imgUrl[1] = ['img/pop/laiyin4.jpg'];
 imgUrl[2] = ['img/pop/laiyin5.jpg'];
 imgUrl[3] = ['img/pop/laiyin6.jpg'];
-var text = [];
+var text = new Array();
 text[0] = '自1872年成立以来，坚持为解决人类、环境和科技互动过程中出现的挑战开发安全持续的解决方案。德国莱茵TüV集团作为一个独立、公正和专业的机构，长期致力于营造一个同时符合人类和环境需要的美好未来。德国莱茵TÜV集团公司总部位于科隆，在全球61个国家设有490家分支机构，员工总数为17000人。集团共包含120多家公司。其中运营控股公司是TÜV Rheinland AG，TÜV Rheinland Berlin BrandenburgPfalz e.V.是单一股东。';
 text[1] = '环境测试区可开展温度循环、光伏PID测试等服务，能模拟组件在极端恶劣条件下的工作表现。';
 text[2] = '全亚洲最大的太阳能稳态模拟器，最多能容纳20块太阳能组建同时进行光筛测试，也能模拟出组建最真实的工作状态。';
-text[3] = '机械载荷测试是为了确保光伏电站的可靠性，可测试组件在受到暴风、积雪等情况下的受力，并检测组件是否能够承受高强度的机械载荷，最高测试压强可达10000Pa。';
+text[3] = '机械载荷测试是为了确保光伏电站的可靠性，可测试组件在受到暴风、积雪等情况下的受力，并检测组件是否能够承受高强度的机械载荷，最高测试压强可达10000Pa。'; // videoPop 赋值
+
+var videoUrl = new Array("./video/4K/1.mp4", "./video/4K/2.mp4", "./video/4K/3.mp4");
+var videoPoster = new Array("./img/poster/1.jpg", "./img/poster/2.jpg", "./img/poster/3.jpg");

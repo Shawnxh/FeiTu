@@ -5,7 +5,7 @@
     <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
     <title>德国莱茵集团</title>
     <!-- 暂时没有favicon -->
-    <link rel="shortcut icon" type="images/x-icon" href="#"/>
+    <link rel="shortcut icon" type="images/x-icon" href="#" />
     <!-- iOS 7.1 的 Safari 中为 meta 标签新增 minimal-ui 属性，让网页在加载时便可隐藏顶部的地址栏与底部的导航栏 -->
     <meta name="viewport" content="width=device-width,initial-scale=1, maximum-scale=1, user-scalable=no">
     <link rel="stylesheet" href="./css/dist/main.css" />
@@ -13,8 +13,8 @@
 
 <body>
     <div id="app">
-        <iframe class="ifm" id="ifm" name="ifm" :src="'./test.html?video='+n+'.mp4'" frameborder="0"
-            class="{n==isBefore?'before':''}" v-if="showList==n" v-for="n in 10">
+        <iframe class="ifm" name="ifm" :src="'./test.html?video='+n+'.mp4'" frameborder="0" v-if="showList==n"
+            v-for="n in 10">
         </iframe>
         <!-- 土司提示 -->
         <div id="toast">Iphone设备无法使用!</div>
@@ -115,9 +115,9 @@
         <div id="imgListShelter"></div>
         <!-- 缩略图 -->
         <div class="img-list" v-show="isShow" ref="imglist">
-            <div class="imgNameContainer" v-for="items in Lists">
-                <img @click="changeSelect(items.id)" :src="items.src" :alt="items.name" />
-                <div class="thumbnailName">{{items.name}}</div>
+            <div class="imgNameContainer" v-for="item in Lists">
+                <img @click="changeSelect(item.id)" :src="item.src" :alt="item.name" />
+                <div class="thumbnailName">{{item.name}}</div>
             </div>
         </div>
         <div class="layer" id="pop" ref="pop">

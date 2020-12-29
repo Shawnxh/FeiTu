@@ -6,7 +6,9 @@
 #app {
   position: relative;
 }
-#app #videoPop1 {
+#app #videoPop1,
+#app #videoPop2,
+#app #videoPop3 {
   display: none;
   position: absolute;
   left: 0;
@@ -16,7 +18,9 @@
   background-color: rgba(22, 22, 22, 0.719);
   z-index: 10;
 }
-#app #videoPop1 #video {
+#app #videoPop1 .video,
+#app #videoPop2 .video,
+#app #videoPop3 .video {
   width: 100%;
   height: auto;
   position: absolute;
