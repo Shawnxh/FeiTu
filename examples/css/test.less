@@ -1,6 +1,7 @@
 * {
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -102,7 +103,7 @@
     background-size: 3.8125rem 3.75rem;
     position: absolute;
     left: 50%;
-    bottom: -6.5rem;
+    bottom: -5.5rem;
     transform: translateX(-50%);
   }
 }
@@ -112,11 +113,13 @@
   display: block !important;
 
   ._toolBarPV {
-    width: 11.875rem;
-    height: 3.3125rem;
+    display: flex;
+    width: fit-content;
+    height: 1.5rem;
+    line-height: 1.5rem;
     position: fixed;
-    left: 1.1875rem;
-    top: 1.75rem;
+    left: 2rem;
+    top: 0.5rem;
     opacity: 0;
     cursor: pointer;
     color: #fff;
@@ -128,21 +131,14 @@
     // animation: PV 0.5s ease 1s 1 forwards
 
     ._toolBarTotalPV {
-      width: 11.875rem;
+      width: fit-content;
       height: 1.5rem;
-      position: absolute;
-      left: 50%;
-      top: 0;
-      transform: translateX(-50%);
     }
 
     ._toolBarTodayPV {
-      width: 11.875rem;
+      margin-left: 2rem;
+      width: fit-content;
       height: 1.5rem;
-      position: absolute;
-      left: 50%;
-      bottom: 0;
-      transform: translateX(-50%);
     }
   }
 
@@ -163,8 +159,8 @@
     width: 3.0625rem;
     height: 3.26875rem;
     position: fixed;
-    right: 2.6875rem;
-    top: 1.8125rem;
+    top: 13.375rem;
+    right: 2.75rem;
     opacity: 0;
     cursor: pointer;
     background: url("../../img/home/share.png") no-repeat;
@@ -176,8 +172,9 @@
     width: 2.9375rem;
     height: 5rem;
     position: fixed;
-    top: 13.375rem;
-    right: 2.75rem;
+
+    right: 2.6875rem;
+    top: 1.8125rem;
     opacity: 0;
 
     // animation: thumbUpBox 0.5s ease 1s 1 forwards;
@@ -265,28 +262,27 @@
   }
 
   ._toolBarScenario {
-    width: 18rem;
+    width: fit-content;
     height: 2.9rem;
+    padding: 0 5%;
     position: fixed;
-    left: 50%;
-    top: 1.875rem;
+    left: 2rem;
+    top: 2.5rem;
     opacity: 0;
-    transform: translateX(-50%);
-    cursor: pointer;
     border: 1.5px solid #ffffff;
     // animation: scenario 0.5s ease 1s 1 forwards;
 
     #scenarioName {
       width: fit-content;
       height: 1.6875rem;
-      position: absolute;
-      cursor: pointer;
+      line-height: 1.6875rem;
+      position: relative;
       font-family: Adobe Heiti Std;
       color: rgb(247, 240, 240);
       font-size: 14px;
       left: 50%;
       top: 50%;
-      transform: translate(-50%, -70%);
+      transform: translate(-50%, -50%);
     }
   }
 
@@ -398,27 +394,27 @@
 
 @keyframes scenario {
   1% {
-    transform: translateX(-50%) translateY(-5rem);
+    transform: translateY(-5rem);
     opacity: .1;
   }
 
   25% {
-    transform: translateX(-50%) translateY(-4rem);
+    transform: translateY(-4rem);
     opacity: .25;
   }
 
   50% {
-    transform: translateX(-50%) translateY(-2rem);
+    transform: translateY(-2rem);
     opacity: .5;
   }
 
   75% {
-    transform: translateX(-50%) translateY(-1rem);
+    transform: translateY(-1rem);
     opacity: .5;
   }
 
   100% {
-    transform: translateX(-50%) translateY(0);
+    transform: translateY(0);
     opacity: 1;
   }
 }

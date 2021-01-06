@@ -53,12 +53,14 @@
 
   .msg {
     width: 100%;
-    height: 48.4375rem;
-    position: fixed;
+    height: auto;
+    position: absolute;
     left: 0;
     bottom: 0;
     background-color: #fff;
     border-radius: 10px 10px 0 0;
+    border: 2px solid hotpink;
+    margin: 0 -2px 0;
     font-size: 2.125rem;
     font-family: PingFang SC;
     color: #303030;
@@ -103,109 +105,119 @@
       background-position: center 2rem;
       background-size: 8rem 2rem;
 
+      #pull-down {
+        position: relative;
+        overflow: hidden;
+        max-height: 4rem;
+
+        .pull-down-content {
+          position: absolute;
+          left: 50%;
+          bottom: 0;
+          transform: translateX(-50%);
+        }
+      }
+
       #listBox {
         width: 100%;
         height: auto;
-      }
-
-      >div>div {
         // 挡掉 暂无评论 的的背景图片
         background-color: #fff;
-        width: 100%;
-        // height: 11rem;
-        height: auto;
-        position: relative;
 
-        .avatar {
-          width: 4.1875rem;
-          height: 4.1875rem;
-          position: absolute;
-          left: 2rem;
-          top: 2rem;
-        }
-
-        .avatar img {
-          width: 4.1875rem;
-          height: 4.1875rem;
-          border-radius: 50%;
-        }
-
-        .row {
-          display: inline-block;
-        }
-
-        .main {
-          overflow-y: hidden;
-          width: 30.8125rem;
+        div {
+          width: 100%;
+          // height: 11rem;
+          height: auto;
           position: relative;
-          left: 50%;
-          top: 0;
-          transform: translateX(-50%);
-          margin-top: 2rem;
 
-          .nickName {
-            width: fit-content;
-            height: 2rem;
-            line-height: 2rem;
+          .avatar {
+            width: 4.1875rem;
+            height: 4.1875rem;
+            position: absolute;
+            left: 2rem;
+            top: 2rem;
+          }
+
+          .avatar img {
+            width: 4.1875rem;
+            height: 4.1875rem;
+            border-radius: 50%;
+          }
+
+          .row {
+            display: inline-block;
+          }
+
+          .main {
+            overflow-y: hidden;
+            width: 30.8125rem;
             position: relative;
-            left: 0;
+            left: 50%;
             top: 0;
-          }
+            transform: translateX(-50%);
+            margin-top: 2rem;
 
-          .commentContent {
-            // 允许长单词换行
-            word-wrap: break-word;
-            // 允许在长单词内换行
-            word-break: break-all;
-            width: 100%;
-            min-height: 3rem;
-            height: auto;
-            position: relative;
-            margin: 1rem auto 1rem;
-          }
-        }
+            .nickName {
+              width: fit-content;
+              height: 2rem;
+              line-height: 2rem;
+              position: relative;
+              left: 0;
+              top: 0;
+            }
 
-        .love {
-          width: 2rem;
-          height: 4rem;
-          position: absolute;
-          right: 2rem;
-          top: 50%;
-          transform: translateY(-50%);
-
-          .thumbImg {
-            width: 2rem;
-            height: 2.125rem;
-            background: url("../../img/home/thumb_up.png") no-repeat;
-            background-size: 2rem 2.125rem;
-
-            &.active {
-              background: url("../../img/home/thumb_up_selected.png") no-repeat;
-              background-size: 2rem 2.125rem;
+            .commentContent {
+              // 允许长单词换行
+              word-wrap: break-word;
+              // 允许在长单词内换行
+              word-break: break-all;
+              width: 100%;
+              min-height: 3rem;
+              height: auto;
+              position: relative;
+              margin: 1rem auto 1rem;
             }
           }
 
-          .loveNum {
-            // width: 2rem;
-            height: 1.1875rem;
-            margin-top: 0.6875rem;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+          .love {
+            width: 2rem;
+            height: 4rem;
+            position: absolute;
+            right: 2rem;
+            top: 50%;
+            transform: translateY(-50%);
+
+            .thumbImg {
+              width: 2rem;
+              height: 2.125rem;
+              background: url("../../img/home/thumb_up.png") no-repeat;
+              background-size: 2rem 2.125rem;
+
+              &.active {
+                background: url("../../img/home/thumb_up_selected.png") no-repeat;
+                background-size: 2rem 2.125rem;
+              }
+            }
+
+            .loveNum {
+              // width: 2rem;
+              height: 1.1875rem;
+              margin-top: 0.6875rem;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+            }
           }
 
-
+          .hr {
+            background-color: rgba(243, 239, 239, 0.658);
+            width: 37.5rem;
+            height: 0.1rem;
+            position: absolute;
+            right: 0;
+            bottom: 0;
+          }
         }
-
-        .hr {
-          background-color: rgba(243, 239, 239, 0.658);
-          width: 37.5rem;
-          height: 0.1rem;
-          position: absolute;
-          right: 0;
-          bottom: 0;
-        }
-
       }
 
       // >div>div:last-child {
@@ -227,7 +239,7 @@
         // width: 37rem;
         width: 75%;
         // 允许在长单词内换行
-        word-break: break-all;
+        // word-break: break-all;
         position: absolute;
         left: 3%;
         top: 50%;
@@ -248,7 +260,7 @@
 
       .release {
         white-space: nowrap;
-        width: 3.8125rem;
+        width: 10%;
         height: 1.9375rem;
         line-height: 1.9375rem;
         position: absolute;

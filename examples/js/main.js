@@ -6,10 +6,12 @@ var vm = null;
         vm = new Vue({
             el: "#app",
             data: {
-                // 登录之前的api前缀
-                baseUrl: "http://192.168.100.70/open", // https://backtest.cdflytu.com
-                // 登录之后的api前缀
+                // 登录之前的api前缀 + 登录之后的api前缀
+                baseUrl: "http://192.168.100.70/open",
                 loginBaseUrl: "http://192.168.100.70/login_open",
+                // baseUrl: "https://backtest.cdflytu.com/open",
+                // loginBaseUrl: "https://backtest.cdflytu.com/login-open",
+
                 // 项目视频识别 videoKey
                 videoKey: "22e3fae115bd48a8b84db72a57eee061",
                 // 登录行为 => 跳转api
@@ -33,23 +35,18 @@ var vm = null;
                 // 编码登录成功后的返回地址
                 encodeUrl: encodeURIComponent(window.location.href + "?time=1111"),
                 Lists: [{
-                    'id': 1,
                     'src': 'img/thumbnail/1.jpg',
                     'name': '莱茵光伏实验室'
                 }, {
-                    'id': 2,
                     'src': 'img/thumbnail/2.jpg',
                     'name': '实验室一楼'
                 }, {
-                    'id': 3,
                     'src': 'img/thumbnail/3.jpg',
                     'name': '实验室二楼'
                 }, {
-                    'id': 4,
                     'src': 'img/thumbnail/4.jpg',
                     'name': '零部件实验室'
                 }, {
-                    'id': 5,
                     'src': 'img/thumbnail/5.jpg',
                     'name': 'TUV莱茵'
                 }]
@@ -97,6 +94,9 @@ var vm = null;
                 });
 
                 window.onload = () => {
+                    // document.body.addEventListener('touchmove', function (e) {
+                    //     e.preventDefault()
+                    // }, { passive: false });
                     this.changeFontSize();
                     this.thumbnailNameScroll();
                     this.communicationValue();
@@ -130,6 +130,7 @@ var vm = null;
 
                     // 上拉加载更多
                     this.loadMore();
+                    this.refresh();
                 }
 
                 // 进入视频
@@ -173,36 +174,85 @@ var vm = null;
                 // menu => 关闭commentPage页
                 this.$refs.closeComment.onclick = () => {
                     this.$refs.commentPage.style.display = "none";
+                    // $("#app #commentPage").fadeOut(300);
                 };
                 this.$refs.k4.onclick = () => {
-                    sessionStorage.setItem("sharpness", "4K");
-                    sessionStorage.setItem("key", null);
-                    document.getElementById('ifm').contentWindow.location.reload();
-                    // 播放状态下切换清晰度 => 强制显示imglist
-                    this.$refs.imglist.style.display = "block";
+                    this.switchingDefinition("4K");
                 };
                 this.$refs.p1080.onclick = () => {
-                    sessionStorage.setItem("sharpness", "1080");
-                    sessionStorage.setItem("key", null);
-                    document.getElementById('ifm').contentWindow.location.reload();
-                    this.$refs.imglist.style.display = "block";
+                    this.switchingDefinition("1080");
+
                 };
                 this.$refs.p720.onclick = () => {
-                    sessionStorage.setItem("sharpness", "720");
-                    sessionStorage.setItem("key", null);
-                    document.getElementById('ifm').contentWindow.location.reload();
-                    this.$refs.imglist.style.display = "block";
+                    this.switchingDefinition("720");
                 };
             },
             updated: function () { },
             methods: {
+                // 下拉刷新
+                refresh() {
+                    let that = this;
+                    let self = $("#commentPage .detail");
+                    let _start, _end, down_selfTop;
+                    self.on("touchstart", function (e) {
+                        e.preventDefault();
+                        down_selfTop = $(this).scrollTop();
+                        let touch = e.targetTouches[0];
+                        _start = touch.pageY;
+                    });
+
+                    self.on("touchmove", function (e) {
+                        e.preventDefault();
+                        let touch = e.targetTouches[0];
+                        _end = touch.pageY - _start;
+                        if (_end > 0) {
+                            down_selfTop > _end ? $(this).scrollTop(down_selfTop - _end) : $(this).scrollTop(0);
+                        }
+                        if (_end > 0 && $(this).scrollTop() == 0) {
+                            $("#commentPage .detail #pull-down").height(_end);
+                            if (_end >= 60) {
+                                $("#commentPage .detail .pull-down-content").text("释放立即刷新");
+                            }
+                        }
+                    });
+
+                    self.on("touchend", function (e) {
+                        e.preventDefault();
+                        if (_end >= 60 && $("#commentPage .detail #pull-down").height() > 0) {
+                            $("#commentPage .detail .pull-down-content").text("刷新加载中...");
+                            setTimeout(() => {
+                                that.fillCommentList();
+                            }, 500)
+                        } else {
+                            $("#commentPage .detail #pull-down").height(0);
+                        }
+                    })
+                },
                 // 上拉加载
                 loadMore() {
                     let that = this;
-                    let obj = document.getElementById("listBox");
-                    $("#commentPage .detail").on("touchmove", function () {
+                    let self = $("#commentPage .detail");
+                    // listBox的实际高度
+                    let obj = $("#commentPage #listBox");
+                    let _start, _end, up_selfTop;
+                    self.on("touchstart", function (e) {
+                        e.preventDefault();
+                        up_selfTop = $(this).scrollTop();
+                        let touch = e.targetTouches[0];
+                        _start = touch.pageY;
+                    });
+
+                    self.on("touchmove", function (e) {
+                        e.preventDefault();
+                        let touch = e.targetTouches[0];
+                        _end = touch.pageY - _start;
+                        if (_end < 0) {
+                            // console.log(up_selfTop)
+                            // console.log($(this).scrollTop())
+                            $(this).scrollTop(up_selfTop - _end);
+                        }
                         // 距离底部还有 60px 的时候启动
-                        if (($(this).scrollTop() + $(this).height() + 60) > obj.offsetHeight && that.pageNo < Number(that.pageTotal)) {
+                        if (($(this).scrollTop() + $(this).height() + 60) > obj.height() && that.pageNo < Number(that.pageTotal)) {
                             that.pageNo += 1;
                             $.ajax({
                                 type: "get",
@@ -231,8 +281,9 @@ var vm = null;
                     });
 
                     // 所有评论 all-in => 继续上滑
-                    $("#commentPage .detail").on("touchend", function () {
-                        if (($(this).scrollTop() + $(this).height()) === obj.offsetHeight && that.pageNo === Number(that.pageTotal)) {
+                    self.on("touchend", function (e) {
+                        e.preventDefault();
+                        if (($(this).scrollTop() + $(this).height()) === obj.height() && that.pageNo === Number(that.pageTotal)) {
                             let releaseStatus = $("#commentPage #releaseFeedback");
                             releaseStatus.text("没有更多内容啦!");
                             releaseStatus.show();
@@ -254,7 +305,10 @@ var vm = null;
                             request.setRequestHeader("token", that.getCookie("token"));
                         },
                         success: function (res) {
-                            console.log(res);
+                            if ($("#commentPage .detail #pull-down").height() > 0) {
+                                $("#commentPage .detail .pull-down-content").text("下拉刷新");
+                                $("#commentPage .detail #pull-down").height(0);
+                            }
                             // 评论解码
                             let newCommentList = res.result.list.map((item) => {
                                 let commentCont = item.commentContent;
@@ -264,6 +318,11 @@ var vm = null;
                             that.commentList = newCommentList;
                             that.commentCount = res.result.page.totalNum;
                             that.pageTotal = res.result.page.totalPage;
+                            // 移除暂无评论提示
+                            if (Number(that.commentCount) > 0) {
+                                $("#commentPage .detail").css("background-image", "url()");
+                            }
+
                         },
                         error: function (err) {
                             console.log(err)
@@ -519,9 +578,6 @@ var vm = null;
 
                 changeSelect(index) {
                     if (index != this.showList) {
-                        console.log('热点事件函数changeselect()触发')
-                        // this.isBefore = this.showList;
-                        // this.isBefore = index;
                         this.showList = index;
                         document.getElementsByClassName("img-list")[0].style.display = "block";
                     }
@@ -596,6 +652,16 @@ var vm = null;
                             sessionStorage.setItem("isTurnOn", false);
                         }
                     })
+                },
+                // 清晰度切换
+                switchingDefinition(param) {
+                    if (sessionStorage.getItem("sharpness") !== param) {
+                        sessionStorage.setItem("sharpness", param);
+                        sessionStorage.setItem("key", null);
+                        // pause状态下切换清晰度 => 强制隐藏imglist => 防止误触
+                        this.$refs.imglist.style.display = "none";
+                        document.getElementById('ifm').contentWindow.location.reload();
+                    }
                 }
             },
             watch: {}

@@ -1,7 +1,9 @@
-// 登录之前的api前缀
-const baseUrl = "http://192.168.100.70/open"; // https://backtest.cdflytu.com
-//登录之后的api前缀
+// 登录之前的api前缀 + 登录之后的api前缀
+const baseUrl = "http://192.168.100.70/open";
 const loginBaseUrl = "http://192.168.100.70/login_open";
+// const baseUrl = "https://backtest.cdflytu.com/open";
+// const loginBaseUrl = "https://backtest.cdflytu.com/login-open";
+
 // 项目视频识别 videoKey
 const videoKey = "22e3fae115bd48a8b84db72a57eee061";
 // 登录行为 => 跳转api地址
@@ -24,6 +26,8 @@ let urlCurrent = $("iframe", parent.document).attr("src");
 // let urlC = Number(((urlCurrent.split('?')[1]).split('=')[1]).split('.')[0]);
 let urlC = Number((urlCurrent.split('=')[1]).split('.')[0]);
 console.log(urlC);
+// 存取热点数据 + 场景名 + videoPop的videoSrc + videoPop的videoPoster + 
+let result, scenarioName, videoUrl, videoPoster;
 
 window.onload = function () {
     initTest();
@@ -108,51 +112,70 @@ function init(url) {
         });
 
         function hotIconEvt() {
-            if (switchContainer && switchContainer.type == 'fromPopUp1') {
-                showVideoPop(1);
-            } else if (switchContainer && switchContainer.type == 'fromBeacon2_left') {
-                localStorage.setItem("changeTo", true);
-            } else if (switchContainer && switchContainer.type == 'fromPopUp2_1') {
-                showPop(1);
-            } else if (switchContainer && switchContainer.type == 'fromPopUp2_2') {
-                showPop(2);
-            } else if (switchContainer && switchContainer.type == 'fromPopUp2_3') {
-                showPop(3);
+            for (let i = 0; i < result.length; i++) {
+                if (switchContainer && switchContainer.type == result[i].name && result[i].what == "video" && result[i].which == 1) {
+                    showVideoPop(1);
+                } else if (switchContainer && switchContainer.type == result[i].name && result[i].what == "video" && result[i].which == 2) {
+                    showVideoPop(2);
+                } else if (switchContainer && switchContainer.type == result[i].name && result[i].what == "text" && result[i].which == 1) {
+                    showPop(1)
+                } else if (switchContainer && switchContainer.type == result[i].name && result[i].what == "text" && result[i].which == 2) {
+                    showPop(2)
+                } else if (switchContainer && switchContainer.type == result[i].name && result[i].what == "text" && result[i].which == 3) {
+                    showPop(3)
+                } else if (switchContainer && switchContainer.type == result[i].name && result[i].what == "link" && result[i].which == 0) {
+                    localStorage.setItem("changeTo", true);
+                } else if (switchContainer && switchContainer.type == result[i].name && result[i].what == "link" && result[i].which !== 0) {
+                    parent.vm.changeSelect(result[i].which);
+                }
             }
         }
 
         vr.container.addEventListener("mousemove", function (e) {
             util.bindRaycaster(e, {
                 success: function (obj) {
-                    if (obj[0].object.name == "popUp1") {
-                        document.body.style.cursor = "pointer";
-                        switchContainer = {
-                            'type': 'fromPopUp1'
+                    for (let i = 0; i < result.length; i++) {
+                        if (obj[0].object.name == result[i].name && result[i].what == "video" && result[i].which == 1) {
+                            switchContainer = { 'type': result[i].name };
+                            // break;
+                            return;
                         }
-                    } else if (obj[0].object.name == "beacon2_left") {
-                        document.body.style.cursor = "pointer";
-                        switchContainer = {
-                            'type': 'fromBeacon2_left'
+                        else if (obj[0].object.name == result[i].name && result[i].what == "video" && result[i].which == 2) {
+                            switchContainer = { 'type': result[i].name };
+                            // break;
+                            return;
                         }
-                    } else if (obj[0].object.name == "popUp2_1") {
-                        document.body.style.cursor = "pointer";
-                        switchContainer = {
-                            'type': 'fromPopUp2_1'
+                        else if (obj[0].object.name == result[i].name && result[i].what == "text" && result[i].which == 1) {
+                            switchContainer = { 'type': result[i].name };
+                            // break;
+                            return;
                         }
-                    } else if (obj[0].object.name == "popUp2_2") {
-                        document.body.style.cursor = "pointer";
-                        switchContainer = {
-                            'type': 'fromPopUp2_2'
+                        else if (obj[0].object.name == result[i].name && result[i].what == "text" && result[i].which == 2) {
+                            switchContainer = { 'type': result[i].name };
+                            // break;
+                            return;
                         }
-                    } else if (obj[0].object.name == "popUp2_3") {
-                        document.body.style.cursor = "pointer";
-                        switchContainer = {
-                            'type': 'fromPopUp2_3'
+                        else if (obj[0].object.name == result[i].name && result[i].what == "text" && result[i].which == 3) {
+                            switchContainer = { 'type': result[i].name };
+                            // break;
+                            return;
                         }
-                    } else {
-                        switchContainer = null;
-                        document.body.style.cursor = "auto";
+                        else if (obj[0].object.name == result[i].name && result[i].what == "link" && result[i].which == 0) {
+                            switchContainer = { 'type': result[i].name };
+                            // break;
+                            return;
+                        }
+                        else if (obj[0].object.name == result[i].name && result[i].what == "link" && result[i].which !== 0) {
+                            switchContainer = { 'type': result[i].name };
+                            // break;
+                            return;
+                        }
+                        else {
+                            switchContainer = null;
+                            document.body.style.cursor = "auto";
+                        }
                     }
+                    // console.log(switchContainer);
                 },
                 empty: function () {
                     vr.cameraEvt.leave();
@@ -163,16 +186,60 @@ function init(url) {
         }, false)
 
         let util = new VRUtils(vr);
-        // 1.video
-        if (urlC === 1) {
-            util.markIcon("textures/discount.png", new THREE.Vector3(-4, 0, 12), 'popUp1', '莱茵集团', 1, 1);
+        if (urlC == 1) {
+            scenarioName = res1.scenarioName;
+            result = res1.resultset.map((item) => {
+                item.position = generatedCoordinate(item.position.x, item.position.y, item.position.z);
+                return item;
+            });
+
+            for (let i = 0; i < result.length; i++) {
+                util.markIcon(result[i].img, result[i].position, result[i].name, result[i].title, result[i].w, result[i].h)
+            }
         }
-        // 2.video
-        else if (urlC === 2) {
-            util.markIcon("textures/right.png", new THREE.Vector3(-5, -2, 7), 'beacon2_left', '实验室二楼', 1, 1);
-            util.markIcon("textures/discount.png", new THREE.Vector3(-5, 0, 10), 'popUp2_1', '环境测试', 1, 1);
-            util.markIcon("textures/discount.png", new THREE.Vector3(5, 0, 10), 'popUp2_2', '稳态模拟器', 1, 1);
-            util.markIcon("textures/discount.png", new THREE.Vector3(-6, -1, 10), 'popUp2_3', '机械载荷测试', 1, 1);
+        else if (urlC == 2) {
+            scenarioName = res2.scenarioName;
+            result = res2.resultset.map((item) => {
+                item.position = generatedCoordinate(item.position.x, item.position.y, item.position.z);
+                return item;
+            })
+
+            for (let i = 0; i < result.length; i++) {
+                util.markIcon(result[i].img, result[i].position, result[i].name, result[i].title, result[i].w, result[i].h)
+            }
+        }
+        else if (urlC == 3) {
+            scenarioName = res3.scenarioName;
+            result = res3.resultset.map((item) => {
+                item.position = generatedCoordinate(item.position.x, item.position.y, item.position.z);
+                return item;
+            })
+
+            for (let i = 0; i < result.length; i++) {
+                util.markIcon(result[i].img, result[i].position, result[i].name, result[i].title, result[i].w, result[i].h)
+            }
+        }
+        else if (urlC == 4) {
+            scenarioName = res4.scenarioName;
+            result = res4.resultset.map((item) => {
+                item.position = generatedCoordinate(item.position.x, item.position.y, item.position.z);
+                return item;
+            })
+
+            for (let i = 0; i < result.length; i++) {
+                util.markIcon(result[i].img, result[i].position, result[i].name, result[i].title, result[i].w, result[i].h)
+            }
+        }
+        else if (urlC == 5) {
+            scenarioName = res5.scenarioName;
+            result = res5.resultset.map((item) => {
+                item.position = generatedCoordinate(item.position.x, item.position.y, item.position.z);
+                return item;
+            })
+
+            for (let i = 0; i < result.length; i++) {
+                util.markIcon(result[i].img, result[i].position, result[i].name, result[i].title, result[i].w, result[i].h)
+            }
         }
 
         animate();
@@ -205,20 +272,22 @@ function init(url) {
 // 热点逻辑处理
 function getMarkIconObj() {
     // Mesh OBJ
-    let popBeacon1 = scene.getObjectByName("popUp1");
-    let popBeacon2_1 = scene.getObjectByName("popUp2_1");
-    let popBeacon2_2 = scene.getObjectByName("popUp2_2");
-    let popBeacon2_3 = scene.getObjectByName("popUp2_3");
-
-    let hotBeacon2_left = scene.getObjectByName("beacon2_left");
+    let videoPopBeacon1 = scene.getObjectByName("videoPopUp1");
+    let videoPopBeacon2 = scene.getObjectByName("videoPopUp2");
+    let popBeacon1 = scene.getObjectByName("textPopUp1");
+    let popBeacon2 = scene.getObjectByName("textPopUp2");
+    let popBeacon3 = scene.getObjectByName("textPopUp3");
+    let beacon1 = scene.getObjectByName("beacon1");
+    let Beacon2 = scene.getObjectByName("beacon2");
 
     // Tip DOM
-    let popBeaconTip1 = document.getElementById("popUp1");
-    let popBeaconTip2_1 = document.getElementById("popUp2_1");
-    let popBeaconTip2_2 = document.getElementById("popUp2_2");
-    let popBeaconTip2_3 = document.getElementById("popUp2_3");
-
-    let hotBeaconTip2_left = document.getElementById("beacon2_left");
+    let videoPopBeaconTip1 = document.getElementById("videoPopUp1");
+    let videoPopBeaconTip2 = document.getElementById("videoPopUp2");
+    let popBeaconTip1 = document.getElementById("textPopUp1");
+    let popBeaconTip2 = document.getElementById("textPopUp2");
+    let popBeaconTip3 = document.getElementById("textPopUp3");
+    let beaconTip1 = document.getElementById("beacon1");
+    let BeaconTip2 = document.getElementById("beacon2");
 
     // 控制热点在任意时间出现,传入三个参数
     // beacon: 热点dom对象;  tip:对应dom的tip文字注释; 
@@ -245,28 +314,50 @@ function getMarkIconObj() {
 
     // 隐藏热点按钮Fn
     function hideHotBeacon() {
-        if (urlC === 1) {
+        // 视频弹窗
+        if (videoPopBeacon1 && videoPopBeaconTip1) {
+            videoPopBeacon1.visible = false;
+            videoPopBeaconTip1.style.position = "";
+        }
+        if (videoPopBeacon2 && videoPopBeaconTip2) {
+            videoPopBeacon2.visible = false;
+            videoPopBeaconTip2.style.position = "";
+        }
+
+        // 文字弹窗
+        if (popBeacon1 && popBeaconTip1) {
             popBeacon1.visible = false;
             popBeaconTip1.style.position = "";
-        } else if (urlC === 2) {
-            hotBeacon2_left.visible = false;
-            hotBeaconTip2_left.style.position = "";
-            popBeacon2_1.visible = false;
-            popBeaconTip2_1.style.position = "";
-            popBeacon2_2.visible = false;
-            popBeaconTip2_2.style.position = "";
-            popBeacon2_3.visible = false;
-            popBeaconTip2_3.style.position = "";
+        }
+        if (popBeacon2 && popBeaconTip2) {
+            popBeacon2.visible = false;
+            popBeaconTip2.style.position = "";
+        }
+        if (popBeacon3 && popBeaconTip3) {
+            popBeacon3.visible = false;
+            popBeaconTip3.style.position = "";
+        }
+
+        // 跳转热点
+        if (beacon1 && beaconTip1) {
+            beacon1.visible = false;
+            beaconTip1.style.position = "";
+        }
+        if (Beacon2 && BeaconTip2) {
+            Beacon2.visible = false;
+            BeaconTip2.style.position = "";
         }
     }
 
     if (urlC == 1) {
+        // vr.video.currentTime = 23;
         fillScenarioName();
-        // fillPopUp(0, 1);
+        fillPopUp(0, 1);
         fillVideoPopUp(0, 1);
 
         hideHotBeacon();
         whenView(popBeacon1, popBeaconTip1, 25, 31);
+        whenView(videoPopBeacon1, videoPopBeaconTip1, 25, 31);
 
         if (sessionStorage.getItem("key") == "1") {
             // firstPageAnimation();
@@ -283,10 +374,10 @@ function getMarkIconObj() {
         fillPopUp(3, 3);
 
         hideHotBeacon();
-        whenView(hotBeacon2_left, hotBeaconTip2_left, 75, 91);
-        whenView(popBeacon2_1, popBeaconTip2_1, 2, 17);
-        whenView(popBeacon2_2, popBeaconTip2_2, 21, 29);
-        whenView(popBeacon2_3, popBeaconTip2_3, 35, 47);
+        whenView(beacon1, beaconTip1, 75, 91);
+        whenView(popBeacon1, popBeaconTip1, 2, 17);
+        whenView(popBeacon2, popBeaconTip2, 21, 29);
+        whenView(popBeacon3, popBeaconTip3, 35, 47);
 
         removeImgListAnimation();
     } else if (urlC == 3) {
@@ -304,10 +395,6 @@ function getMarkIconObj() {
     } else if (urlC == 5) {
         sessionStorage.setItem("key", "5");
         fillScenarioName();
-        hideHotBeacon();
-
-        removeImgListAnimation();
-    } else {
         hideHotBeacon();
 
         removeImgListAnimation();
@@ -404,7 +491,7 @@ function fillVideoPopUp(index, assign) {
  */
 
 function fillScenarioName() {
-    $('#scenarioName').text(scenarioName[urlC - 1]);
+    $('#scenarioName').text(scenarioName);
 }
 
 // 控制每次进入video时 => 工具栏的动画执行
@@ -578,6 +665,10 @@ function initTest() {
     $('#openingPage .loading', parent.document).show();
 }
 
+// 生成笛卡尔坐标
+function generatedCoordinate(x, y, z) {
+    return new THREE.Vector3(x, y, z)
+}
 
 //进入全屏  
 function requestFullScreen() {
@@ -760,8 +851,130 @@ function thumbUpSelect() {
     })
 }
 
-let scenarioName = new Array("莱茵光伏实验室", "实验室一楼", "实验室二楼", "零部件实验室", "TUV莱茵");
+// let scenarioName = new Array("莱茵光伏实验室", "实验室一楼", "实验室二楼", "零部件实验室", "TUV莱茵");
+let res1 = {
+    "success": true,
+    "code": 0,
+    "scenarioName": "莱茵光伏实验室",
+    "resultset": [
+        {
+            "what": "video", //弹窗类型 => 视频弹窗
+            "which": 1, // 表示启用页面的第几个videoPop
+            "img": "./textures/discount.png",
+            "position": {
+                x: -4,
+                y: 2,
+                z: 12
+            },
+            "name": "videoPopUp1",
+            "title": "视频弹窗",
+            "w": "1",
+            "h": "1"
+        },
+        {
+            "what": "text", //弹窗类型 => 文本弹窗
+            "which": 1, // 表示启用页面的第几个textPop
+            "img": "./textures/discount.png",
+            "position": {
+                x: -4,
+                y: 0,
+                z: 12
+            },
+            "name": "textPopUp1",
+            "title": "莱茵集团",
+            "w": "1",
+            "h": "1"
+        }
+    ]
+}
 
+let res2 = {
+    "success": true,
+    "code": 0,
+    "scenarioName": "实验室一楼",
+    "resultset": [
+        {
+            "what": "link", //弹窗类型 => 热点跳转
+            "which": 0, // Number类型(正整数), 跳转功能时, 0:跳转下一个视频, other:跳转到第几个视频
+            "img": "./textures/right.png",
+            "position": {
+                x: -5,
+                y: -2,
+                z: 7
+            },
+            "name": "beacon1",
+            "title": "实验室二楼",
+            "w": "1",
+            "h": "1"
+        },
+        {
+            "what": "text",
+            "which": 1,
+            "img": "./textures/discount.png",
+            "position": {
+                x: -5,
+                y: 0,
+                z: 10
+            },
+            "name": "textPopUp1",
+            "title": "环境测试",
+            "w": "1",
+            "h": "1"
+        },
+        {
+            "what": "text",
+            "which": 2,
+            "img": "./textures/discount.png",
+            "position": {
+                x: 5,
+                y: 0,
+                z: 10
+            },
+            "name": "textPopUp2",
+            "title": "稳态模拟器",
+            "w": "1",
+            "h": "1"
+        },
+        {
+            "what": "text",
+            "which": 3,
+            "img": "./textures/discount.png",
+            "position": {
+                x: -6,
+                y: -1,
+                z: 10
+            },
+            "name": "textPopUp3",
+            "title": "机械载荷测试",
+            "w": "1",
+            "h": "1"
+        }
+    ]
+}
+
+let res3 = {
+    "success": true,
+    "code": 0,
+    "scenarioName": "实验室二楼",
+    "resultset": [
+    ]
+}
+
+let res4 = {
+    "success": true,
+    "code": 0,
+    "scenarioName": "零部件实验室",
+    "resultset": [
+    ]
+}
+
+let res5 = {
+    "success": true,
+    "code": 0,
+    "scenarioName": "TUV莱茵",
+    "resultset": [
+    ]
+}
 
 // pop 赋值
 let title = new Array();
@@ -783,6 +996,6 @@ text[2] = '全亚洲最大的太阳能稳态模拟器，最多能容纳20块太�
 text[3] = '机械载荷测试是为了确保光伏电站的可靠性，可测试组件在受到暴风、积雪等情况下的受力，并检测组件是否能够承受高强度的机械载荷，最高测试压强可达10000Pa。';
 
 // videoPop 赋值
-let videoUrl = new Array("./video/4K/1.mp4", "./video/4K/2.mp4", "./video/4K/3.mp4");
-let videoPoster = new Array("./img/poster/1.jpg", "./img/poster/2.jpg", "./img/poster/3.jpg");
+videoUrl = new Array("./video/4K/1.mp4", "./video/4K/2.mp4", "./video/4K/3.mp4");
+videoPoster = new Array("./img/poster/1.jpg", "./img/poster/2.jpg", "./img/poster/3.jpg");
 

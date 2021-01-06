@@ -174,12 +174,12 @@
             that.autoHideLeftTime = that.defaultAutoHideLeftTime;
             toolBar.isActive = false;
         }, false);
-        // that.renderer.domElement.addEventListener('wheel', function (e) {
-        //     var delta = e.deltaY > 0 ? 15 : -15;
-        //     if (that.camera.fov + delta * 0.05 >= 10 && that.camera.fov + delta * 0.05 <= 120) {
-        //         fovChange(delta);
-        //     }
-        // }, false);
+        that.renderer.domElement.addEventListener('wheel', function (e) {
+            var delta = e.deltaY > 0 ? 15 : -15;
+            if (that.camera.fov + delta * 0.05 >= 10 && that.camera.fov + delta * 0.05 <= 120) {
+                fovChange(delta);
+            }
+        }, false);
 
         toolBar.moreList.addEventListener("mousemove", slide, false);
         toolBar.moreList.addEventListener("touchmove", slide, false);
@@ -251,7 +251,7 @@
                 clearInterval(that.timerList.renderTouchersRimer);
                 that.timerList.renderTouchersRimer = setInterval(function () {
                     // 禁用移动端的双指缩放功能
-                    // renderTouches(touches);
+                    renderTouches(touches);
                 }, 1);
             }
         }

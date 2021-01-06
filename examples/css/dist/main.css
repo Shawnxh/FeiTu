@@ -49,12 +49,14 @@
 }
 #commentPage .msg {
   width: 100%;
-  height: 48.4375rem;
-  position: fixed;
+  height: auto;
+  position: absolute;
   left: 0;
   bottom: 0;
   background-color: #fff;
   border-radius: 10px 10px 0 0;
+  border: 2px solid hotpink;
+  margin: 0 -2px 0;
   font-size: 2.125rem;
   font-family: PingFang SC;
   color: #303030;
@@ -95,32 +97,43 @@
   background-position: center 2rem;
   background-size: 8rem 2rem;
 }
+#commentPage .msg .detail #pull-down {
+  position: relative;
+  overflow: hidden;
+  max-height: 4rem;
+}
+#commentPage .msg .detail #pull-down .pull-down-content {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+}
 #commentPage .msg .detail #listBox {
   width: 100%;
   height: auto;
-}
-#commentPage .msg .detail > div > div {
   background-color: #fff;
+}
+#commentPage .msg .detail #listBox div {
   width: 100%;
   height: auto;
   position: relative;
 }
-#commentPage .msg .detail > div > div .avatar {
+#commentPage .msg .detail #listBox div .avatar {
   width: 4.1875rem;
   height: 4.1875rem;
   position: absolute;
   left: 2rem;
   top: 2rem;
 }
-#commentPage .msg .detail > div > div .avatar img {
+#commentPage .msg .detail #listBox div .avatar img {
   width: 4.1875rem;
   height: 4.1875rem;
   border-radius: 50%;
 }
-#commentPage .msg .detail > div > div .row {
+#commentPage .msg .detail #listBox div .row {
   display: inline-block;
 }
-#commentPage .msg .detail > div > div .main {
+#commentPage .msg .detail #listBox div .main {
   overflow-y: hidden;
   width: 30.8125rem;
   position: relative;
@@ -129,7 +142,7 @@
   transform: translateX(-50%);
   margin-top: 2rem;
 }
-#commentPage .msg .detail > div > div .main .nickName {
+#commentPage .msg .detail #listBox div .main .nickName {
   width: fit-content;
   height: 2rem;
   line-height: 2rem;
@@ -137,7 +150,7 @@
   left: 0;
   top: 0;
 }
-#commentPage .msg .detail > div > div .main .commentContent {
+#commentPage .msg .detail #listBox div .main .commentContent {
   word-wrap: break-word;
   word-break: break-all;
   width: 100%;
@@ -146,7 +159,7 @@
   position: relative;
   margin: 1rem auto 1rem;
 }
-#commentPage .msg .detail > div > div .love {
+#commentPage .msg .detail #listBox div .love {
   width: 2rem;
   height: 4rem;
   position: absolute;
@@ -154,24 +167,24 @@
   top: 50%;
   transform: translateY(-50%);
 }
-#commentPage .msg .detail > div > div .love .thumbImg {
+#commentPage .msg .detail #listBox div .love .thumbImg {
   width: 2rem;
   height: 2.125rem;
   background: url("../../img/home/thumb_up.png") no-repeat;
   background-size: 2rem 2.125rem;
 }
-#commentPage .msg .detail > div > div .love .thumbImg.active {
+#commentPage .msg .detail #listBox div .love .thumbImg.active {
   background: url("../../img/home/thumb_up_selected.png") no-repeat;
   background-size: 2rem 2.125rem;
 }
-#commentPage .msg .detail > div > div .love .loveNum {
+#commentPage .msg .detail #listBox div .love .loveNum {
   height: 1.1875rem;
   margin-top: 0.6875rem;
   display: flex;
   justify-content: center;
   align-items: center;
 }
-#commentPage .msg .detail > div > div .hr {
+#commentPage .msg .detail #listBox div .hr {
   background-color: rgba(243, 239, 239, 0.658);
   width: 37.5rem;
   height: 0.1rem;
@@ -190,7 +203,6 @@
 }
 #commentPage .msg .footer textarea {
   width: 75%;
-  word-break: break-all;
   position: absolute;
   left: 3%;
   top: 50%;
@@ -206,7 +218,7 @@
 }
 #commentPage .msg .footer .release {
   white-space: nowrap;
-  width: 3.8125rem;
+  width: 10%;
   height: 1.9375rem;
   line-height: 1.9375rem;
   position: absolute;
