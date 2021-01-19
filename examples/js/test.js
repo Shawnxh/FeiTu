@@ -1,6 +1,6 @@
 // 登录之前的api前缀 + 登录之后的api前缀
-const baseUrl = "http://192.168.100.70/open";
-const loginBaseUrl = "http://192.168.100.70/login_open";
+const baseUrl = "http://192.168.100.178/open";
+const loginBaseUrl = "http://192.168.100.178/login_open";
 // const baseUrl = "https://backtest.cdflytu.com/open";
 // const loginBaseUrl = "https://backtest.cdflytu.com/login-open";
 
@@ -14,11 +14,6 @@ let isLogin = "";
 let likedAmount;
 // 编码登录成功后的返回地址
 let linkUrl = encodeURIComponent(window.parent.location.href + "?time=1111");
-
-let vr = null
-let scene = null
-let renderer = null
-let container = null
 // 存取iphone端土司提示定时器 => 用于优化对用户不断点击产生过多一次性定时器的的问题
 let toast;
 // 获取currentUrl,用于判断 hotBeacon的显示与隐藏
@@ -28,23 +23,29 @@ let urlC = Number((urlCurrent.split('=')[1]).split('.')[0]);
 console.log(urlC);
 // 存取热点数据 + 场景名 + videoPop的videoSrc + videoPop的videoPoster + 
 let result, scenarioName, videoUrl, videoPoster;
+// 热点按钮 => 跳转外连地址
+const beaconLink = "https://ftplayer.cdflytu.com";
+// 左下角back按钮 => 外连地址
+const backLink = "https://ftplayer.cdflytu.com";
+
+// let x = window.prompt("x轴坐标");
+// let y = window.prompt("y轴坐标");
+// let z = window.prompt("z轴坐标");
 
 window.onload = function () {
     initTest();
-    setTimeout(() => {
-        init(getParam(window.location.search, 'video'));
-        PageAnimation();
-        showPage();
-        byValue();
-        fullScreen();
-        turnOnGyro();
-        $('#full_feature1').swipeslider();
-        $('#full_feature2').swipeslider();
-        $('#full_feature3').swipeslider();
-    }, 100)
+    init(getParam(window.location.search, 'video'));
+    PageAnimation();
+    showPage();
+    byValue();
+    fullScreen();
+    turnOnGyro();
+    $('#full_feature1').swipeslider();
+    $('#full_feature2').swipeslider();
+    $('#full_feature3').swipeslider();
 }
 
-let theUrl = '';
+let vr, scene, renderer, container, theUrl;
 
 function init(url) {
     theUrl = url ? url : '1.mp4';
@@ -85,7 +86,7 @@ function init(url) {
             $('#openingPage .loading', parent.document).hide();
             setTimeout(() => {
                 $('#openingPage .go', parent.document).show();
-            }, 300);
+            }, 100);
         }
     }
     vr.init(function () { });
@@ -99,14 +100,13 @@ function init(url) {
         if (AVR.OS.isWeixin() && !AVR.OS.isiOS() && isHuawei) {
             if (vr.video.getAttribute('x5-video-orientation') == "landscape") {
                 vr.toolBar.toolbar.style.width = document.body.clientWidth + "px";
-
             } else {
                 vr.toolBar.toolbar.style.width = "100%";
             }
         }
     })
 
-    if (theUrl.split(".")[0] < 6) {
+    if (theUrl.split(".")[0] < 15) {
         container.addEventListener('click', function (e) {
             hotIconEvt();
         });
@@ -118,14 +118,16 @@ function init(url) {
                 } else if (switchContainer && switchContainer.type == result[i].name && result[i].what == "video" && result[i].which == 2) {
                     showVideoPop(2);
                 } else if (switchContainer && switchContainer.type == result[i].name && result[i].what == "text" && result[i].which == 1) {
-                    showPop(1)
+                    showTextPop(1)
                 } else if (switchContainer && switchContainer.type == result[i].name && result[i].what == "text" && result[i].which == 2) {
-                    showPop(2)
+                    showTextPop(2)
                 } else if (switchContainer && switchContainer.type == result[i].name && result[i].what == "text" && result[i].which == 3) {
-                    showPop(3)
+                    showTextPop(3)
                 } else if (switchContainer && switchContainer.type == result[i].name && result[i].what == "link" && result[i].which == 0) {
                     localStorage.setItem("changeTo", true);
-                } else if (switchContainer && switchContainer.type == result[i].name && result[i].what == "link" && result[i].which !== 0) {
+                } else if (switchContainer && switchContainer.type == result[i].name && result[i].what == "link" && result[i].which == null) {
+                    window.parent.location.href = beaconLink;
+                } else if (switchContainer && switchContainer.type == result[i].name && result[i].what == "link" && result[i].which !== 0 && result[i].which !== null) {
                     parent.vm.changeSelect(result[i].which);
                 }
             }
@@ -301,16 +303,12 @@ function getMarkIconObj() {
                 beacon.visible = true;
                 tip.style.position = "absolute";
             }
-
             if (time > seconds2) {
                 beacon.visible = false;
                 tip.style.position = "";
             }
-
-
         }, 1000)
     }
-
 
     // 隐藏热点按钮Fn
     function hideHotBeacon() {
@@ -350,7 +348,7 @@ function getMarkIconObj() {
     }
 
     if (urlC == 1) {
-        // vr.video.currentTime = 23;
+        vr.video.currentTime = 23;
         fillScenarioName();
         fillPopUp(0, 1);
         fillVideoPopUp(0, 1);
@@ -359,10 +357,12 @@ function getMarkIconObj() {
         whenView(popBeacon1, popBeaconTip1, 25, 31);
         whenView(videoPopBeacon1, videoPopBeaconTip1, 25, 31);
 
+        // videoPopBeacon2.visible = true;
+        // videoPopBeaconTip2.style.position = "absolute";
+
         if (sessionStorage.getItem("key") == "1") {
-            // firstPageAnimation();
         } else {
-            removeImgListAnimation();
+            notEnteringFirstlyBehavior();
         }
 
 
@@ -379,25 +379,25 @@ function getMarkIconObj() {
         whenView(popBeacon2, popBeaconTip2, 21, 29);
         whenView(popBeacon3, popBeaconTip3, 35, 47);
 
-        removeImgListAnimation();
+        notEnteringFirstlyBehavior();
     } else if (urlC == 3) {
         sessionStorage.setItem("key", "3");
         fillScenarioName();
         hideHotBeacon();
 
-        removeImgListAnimation();
+        notEnteringFirstlyBehavior();
     } else if (urlC == 4) {
         sessionStorage.setItem("key", "4");
         fillScenarioName();
         hideHotBeacon();
 
-        removeImgListAnimation();
+        notEnteringFirstlyBehavior();
     } else if (urlC == 5) {
         sessionStorage.setItem("key", "5");
         fillScenarioName();
         hideHotBeacon();
 
-        removeImgListAnimation();
+        notEnteringFirstlyBehavior();
     }
 }
 
@@ -416,12 +416,15 @@ function getParam(url, name) {
  ===========================
  */
 function closeVideoPop(i) {
-    $("#imgListShelter", parent.document).hide();
     let videoPopId = "#videoPop" + i;
-    $(videoPopId).hide();
     // 触发播放
-    if (sessionStorage.getItem("videoStatus") === "pause") {
+    if (sessionStorage.getItem("videoStatus") == "pause" && $(videoPopId).css("display") == "block") {
         $('._toolBarBtn').click();
+        // 移动web端video播放时会全屏显示,退出全屏就自动暂停,这里可以不用添加 => 防止video标签视屏退出时处于play状态
+        // let videoObj = videoPopId + " video";
+        // $(videoObj).trigger('pause');
+        $("#imgListShelter", parent.document).hide();
+        $(videoPopId).hide();
     }
 }
 function showVideoPop(i) {
@@ -431,24 +434,27 @@ function showVideoPop(i) {
     obj.on("click", () => {
         closeVideoPop(i);
     })
-    if (sessionStorage.getItem("videoStatus") === "play") {
+    if (sessionStorage.getItem("videoStatus") == "play") {
         $('._toolBarBtn').click();
         $(videoPopId).show();
     } else {
         $(videoPopId).show();
     }
 }
-function closePop(i) {
-    let popId = "#pop" + i;
+function closeTextPop(i) {
+    $("#imgListShelter", parent.document).hide();
+    let popId = "#textPop" + i;
     $(popId).hide();
-    if (sessionStorage.getItem("videoStatus") === "pause") {
+    if (sessionStorage.getItem("videoStatus") == "pause") {
         $('._toolBarBtn').click();
     }
 }
 // i : 显示第几个轮播图demo
-function showPop(i) {
-    let popId = "#pop" + i;
-    if (sessionStorage.getItem("videoStatus") === "play") {
+function showTextPop(i) {
+    let obj = $("#imgListShelter", parent.document);
+    let popId = "#textPop" + i;
+    obj.show();
+    if (sessionStorage.getItem("videoStatus") == "play") {
         $('._toolBarBtn').click();
         $(popId).show();
     } else {
@@ -492,6 +498,7 @@ function fillVideoPopUp(index, assign) {
 
 function fillScenarioName() {
     $('#scenarioName').text(scenarioName);
+    $('#openingPage .name', parent.document).text(scenarioName);
 }
 
 // 控制每次进入video时 => 工具栏的动画执行
@@ -515,10 +522,14 @@ function PageAnimation() {
     })
 }
 
-// 控制 main 页面的 img-list 在切换清晰度的时候不会被唤起
-// 控制 test 页面在 video pause时刷新 => imgList始终显示
-function removeImgListAnimation() {
+// 在切换清晰度的时候 => img-list 动画初始化
+// video pause时切换视频 => imgList初始化隐藏
+// 进场文字按钮内容change
+// 进场过渡页背景图change
+function notEnteringFirstlyBehavior() {
     $('.img-list', parent.document).css('animation', '');
+    $('#openingPage .go', parent.document).text("继续播放");
+    $('#openingPage', parent.document).css("background-image", "url(./img/openingPage/" + urlC + ".jpg)");
 }
 
 // 工具栏上的gyro功能 => css表现
@@ -546,22 +557,12 @@ function turnOnGyro() {
 
 // 禁用 重置定位 
 function resetDisabled() {
-    let parent = $("._toolBarMore");
-    let child = $("<div></div>");
-    child.css({
-        "width": "100%", "height": "3rem", "position": "absolute", "bottom": "1.4rem"
-    });
-    child.attr("id", "shelter");
-    child.appendTo(parent);
-    $('._toolBarReset').css({ "background": "url('./img/home/reset_disable.png') no-repeat", "backgroundSize": "2.625rem 2.625rem" });
+    $('._toolBarReset').hide();
 }
 
 // 恢复 重置定位
 function resetEnable() {
-    if ($("#shelter")) {
-        $("#shelter").remove();
-    };
-    $('._toolBarReset').css({ "background": "url('./img/home/reset.png') no-repeat", "backgroundSize": "2.625rem 2.625rem" });
+    $('._toolBarReset').show();
 }
 
 // 判断是否登录 给 test 页面的工具栏绑定事件
@@ -579,7 +580,7 @@ function showPage() {
     loginLogic();
 
     $('._toolBarBack').on('click', () => {
-        window.parent.location.href = 'https://ftplayer.cdflytu.com';
+        window.parent.location.href = backLink;
     });
 
 }
@@ -699,17 +700,17 @@ function exitFullscreen() {
 }
 
 function setCookie(cname, cvalue, exdays) {
-    var d = new Date();
+    let d = new Date();
     d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
-    var expires = "expires=" + d.toGMTString();
+    let expires = "expires=" + d.toGMTString();
     document.cookie = cname + "=" + cvalue + "; " + expires;
 }
 
 function getCookie(cname) {
-    var name = cname + "=";
-    var ca = document.cookie.split(';');
-    for (var i = 0; i < ca.length; i++) {
-        var c = ca[i].trim();
+    let name = cname + "=";
+    let ca = document.cookie.split(';');
+    for (let i = 0; i < ca.length; i++) {
+        let c = ca[i].trim();
         if (c.indexOf(name) == 0) return c.substring(name.length, c.length);
     }
     return "";
@@ -857,10 +858,24 @@ let res1 = {
     "code": 0,
     "scenarioName": "莱茵光伏实验室",
     "resultset": [
+        // {
+        //     "what": "video", 
+        //     "which": 2,
+        //     "img": "./textures/link_forward.png",
+        //     "position": {
+        //         x: x,
+        //         y: y,
+        //         z: z
+        //     },
+        //     "name": "videoPopUp2",
+        //     "title": '(' + x + ',' + y + ',' + z + ')',
+        //     "w": "1",
+        //     "h": "1"
+        // },
         {
             "what": "video", //弹窗类型 => 视频弹窗
             "which": 1, // 表示启用页面的第几个videoPop
-            "img": "./textures/discount.png",
+            "img": "./textures/video.png",
             "position": {
                 x: -4,
                 y: 2,
@@ -874,7 +889,7 @@ let res1 = {
         {
             "what": "text", //弹窗类型 => 文本弹窗
             "which": 1, // 表示启用页面的第几个textPop
-            "img": "./textures/discount.png",
+            "img": "./textures/text.png",
             "position": {
                 x: -4,
                 y: 0,
@@ -910,7 +925,7 @@ let res2 = {
         {
             "what": "text",
             "which": 1,
-            "img": "./textures/discount.png",
+            "img": "./textures/text.png",
             "position": {
                 x: -5,
                 y: 0,
@@ -924,7 +939,7 @@ let res2 = {
         {
             "what": "text",
             "which": 2,
-            "img": "./textures/discount.png",
+            "img": "./textures/text.png",
             "position": {
                 x: 5,
                 y: 0,
@@ -938,7 +953,7 @@ let res2 = {
         {
             "what": "text",
             "which": 3,
-            "img": "./textures/discount.png",
+            "img": "./textures/text.png",
             "position": {
                 x: -6,
                 y: -1,

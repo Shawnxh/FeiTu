@@ -9,8 +9,8 @@ var vm = null;
       el: "#app",
       data: {
         // 登录之前的api前缀 + 登录之后的api前缀
-        baseUrl: "http://192.168.100.70/open",
-        loginBaseUrl: "http://192.168.100.70/login_open",
+        baseUrl: "http://192.168.100.178/open",
+        loginBaseUrl: "http://192.168.100.178/login_open",
         // baseUrl: "https://backtest.cdflytu.com/open",
         // loginBaseUrl: "https://backtest.cdflytu.com/login-open",
         // 项目视频识别 videoKey
@@ -82,51 +82,38 @@ var vm = null;
         });
         window.addEventListener("storage", function (e) {
           if (e.storageArea.changeTo == "true") {
-            // let currentSrc = (document.getElementsByClassName('ifm')[1] ? window.parent.document.getElementsByClassName('ifm')[1] : window.parent.document.getElementsByClassName('ifm')[0]).src;
-            // that.showList = Number((currentSrc.split('=')[1]).split('.')[0]);
-            if (that.showList + 1 < 10) {
+            if (that.showList + 1 < 15) {
               that.changeSelect(that.showList + 1);
             }
           }
-        });
-
-        window.onload = function () {
-          // document.body.addEventListener('touchmove', function (e) {
-          //     e.preventDefault()
-          // }, { passive: false });
-          _this.changeFontSize();
-
-          _this.thumbnailNameScroll();
-
-          _this.communicationValue();
-
-          _this.selectDefinition();
-
-          _this.turnOnGyro();
-        }; // 浏览器离线(断网行为)
-
+        }); // 浏览器离线(断网行为)
 
         window.addEventListener('offline', function () {
-          alert('网络连接断开！');
+          _this.offline();
         });
       },
       mounted: function mounted() {
         var _this2 = this;
 
-        var that = this; // 未登录
+        this.changeFontSize();
+        this.thumbnailNameScroll();
+        this.communicationValue();
+        this.selectDefinition();
+        this.turnOnGyro();
+        this.disabledNewlineCharacter(); // 未登录
 
-        if (!that.isLogin) {
+        if (!this.isLogin) {
           this.$refs.login.onclick = function () {
             $("#signIn").show();
-            window.location.href = _this2.loginNeed + '?from=' + that.encodeUrl;
+            window.location.href = _this2.loginNeed + '?from=' + _this2.encodeUrl;
           };
         } // 登录成功
 
 
-        if (that.isLogin) {
+        if (this.isLogin) {
           // 填充menu栏的用户信息
-          $('#menu .top .avatar img').attr("src", that.loginUser.wxHeadImgUrl);
-          $('#menu .top .nickName').text(that.loginUser.wxNickname); // 填充评论列表
+          $('#menu .top .avatar img').attr("src", this.loginUser.wxHeadImgUrl);
+          $('#menu .top .nickName').text(this.loginUser.wxNickname); // 填充评论列表
 
           this.fillCommentList(); // 上拉加载更多
 
@@ -204,39 +191,43 @@ var vm = null;
           var that = this;
           var self = $("#commentPage .detail");
 
-          var _start, _end, down_selfTop;
+          var _start, down_start, _end, down_end, down_selfTop;
 
           self.on("touchstart", function (e) {
-            e.preventDefault();
+            down_start = null;
+            down_end = null;
             down_selfTop = $(this).scrollTop();
             var touch = e.targetTouches[0];
             _start = touch.pageY;
+
+            if (down_selfTop == 0) {
+              down_start = touch.pageY;
+            }
           });
           self.on("touchmove", function (e) {
             e.preventDefault();
             var touch = e.targetTouches[0];
             _end = touch.pageY - _start;
+            down_start && (down_end = touch.pageY - down_start);
 
-            if (_end > 0) {
+            if (_end > 0 && $(this).scrollTop() > 0) {
               down_selfTop > _end ? $(this).scrollTop(down_selfTop - _end) : $(this).scrollTop(0);
             }
 
-            if (_end > 0 && $(this).scrollTop() == 0) {
-              $("#commentPage .detail #pull-down").height(_end);
+            if (down_end && down_end > 0 && $(this).scrollTop() == 0) {
+              $("#commentPage .detail #pull-down").height(down_end);
 
-              if (_end >= 60) {
+              if (down_end >= 60) {
                 $("#commentPage .detail .pull-down-content").text("释放立即刷新");
               }
             }
           });
           self.on("touchend", function (e) {
-            e.preventDefault();
-
-            if (_end >= 60 && $("#commentPage .detail #pull-down").height() > 0) {
-              $("#commentPage .detail .pull-down-content").text("刷新加载中...");
+            if (down_end && down_end >= 60) {
+              $("#commentPage .detail .pull-down-content").text("正在刷新...");
               setTimeout(function () {
                 that.fillCommentList();
-              }, 500);
+              }, 300);
             } else {
               $("#commentPage .detail #pull-down").height(0);
             }
@@ -249,27 +240,49 @@ var vm = null;
 
           var obj = $("#commentPage #listBox");
 
-          var _start, _end, up_selfTop;
+          var _start, up_start, _end, up_end, up_selfTop, _end_abs, up_end_abs;
 
           self.on("touchstart", function (e) {
-            e.preventDefault();
+            up_start = null;
+            up_end = null;
+            up_end_abs = null;
             up_selfTop = $(this).scrollTop();
             var touch = e.targetTouches[0];
             _start = touch.pageY;
+
+            if ($(this).scrollTop() + $(this).height() >= obj.outerHeight()) {
+              up_start = touch.pageY;
+            }
           });
           self.on("touchmove", function (e) {
             e.preventDefault();
             var touch = e.targetTouches[0];
             _end = touch.pageY - _start;
+            up_start && (up_end = touch.pageY - up_start);
+            _end_abs = Math.abs(_end);
+            up_end && (up_end_abs = Math.abs(up_end));
 
-            if (_end < 0) {
-              // console.log(up_selfTop)
-              // console.log($(this).scrollTop())
-              $(this).scrollTop(up_selfTop - _end);
-            } // 距离底部还有 60px 的时候启动
+            if (_end < 0 && $(this).scrollTop() + $(this).height() < obj.outerHeight()) {
+              $(this).scrollTop(up_selfTop + _end_abs);
+            }
 
+            if (up_end && up_end < 0 && $(this).scrollTop() + $(this).height() >= obj.outerHeight() && that.pageNo < Number(that.pageTotal)) {
+              $("#commentPage .detail #pull-up").height(up_end_abs);
+              $(this).scrollTop(up_selfTop + up_end_abs);
+            }
+          });
+          self.on("touchend", function (e) {
+            // 所有评论 all-in => 继续上滑
+            if ($(this).scrollTop() + $(this).height() == obj.outerHeight() && that.pageNo == Number(that.pageTotal)) {
+              var releaseStatus = $("#commentPage #releaseFeedback");
+              releaseStatus.text("没有更多内容啦!");
+              releaseStatus.show();
+              setTimeout(function () {
+                releaseStatus.hide();
+              }, 1200);
+            }
 
-            if ($(this).scrollTop() + $(this).height() + 60 > obj.height() && that.pageNo < Number(that.pageTotal)) {
+            if (up_end_abs && up_end_abs >= 60 && that.pageNo < Number(that.pageTotal)) {
               that.pageNo += 1;
               $.ajax({
                 type: "get",
@@ -289,24 +302,19 @@ var vm = null;
                   that.commentList = that.commentList.concat(b);
                   that.commentCount = res.result.page.totalNum;
                   that.pageTotal = res.result.page.totalPage;
+
+                  if ($("#commentPage .detail #pull-up").height() > 0) {
+                    setTimeout(function () {
+                      $("#commentPage .detail #pull-up").height(0);
+                    }, 300);
+                  }
                 },
                 error: function error(err) {
                   console.log(err);
                 }
               });
-            }
-          }); // 所有评论 all-in => 继续上滑
-
-          self.on("touchend", function (e) {
-            e.preventDefault();
-
-            if ($(this).scrollTop() + $(this).height() === obj.height() && that.pageNo === Number(that.pageTotal)) {
-              var releaseStatus = $("#commentPage #releaseFeedback");
-              releaseStatus.text("没有更多内容啦!");
-              releaseStatus.show();
-              setTimeout(function () {
-                releaseStatus.hide();
-              }, 1200);
+            } else {
+              $("#commentPage .detail #pull-up").height(0);
             }
           });
         },
@@ -323,8 +331,11 @@ var vm = null;
             },
             success: function success(res) {
               if ($("#commentPage .detail #pull-down").height() > 0) {
-                $("#commentPage .detail .pull-down-content").text("下拉刷新");
-                $("#commentPage .detail #pull-down").height(0);
+                $("#commentPage .detail .pull-down-content").text("刷新成功");
+                setTimeout(function () {
+                  $("#commentPage .detail #pull-down").height(0);
+                  $("#commentPage .detail .pull-down-content").text("下拉刷新");
+                }, 800);
               } // 评论解码
 
 
@@ -406,7 +417,8 @@ var vm = null;
           var commentId = e.target.getAttribute('data-cid');
 
           if ($("[data-cid='" + commentId + "']").hasClass('active')) {
-            // 取消评论点赞
+            console.log("22222222222"); // 取消评论点赞
+
             $.ajax({
               type: "post",
               url: this.loginBaseUrl + '/api/video/video-page/removeCommentLike/',
@@ -609,9 +621,11 @@ var vm = null;
         },
         // =======================================================================================
         changeSelect: function changeSelect(index) {
+          $(".img-list").first().hide();
+
           if (index != this.showList) {
+            console.log('热点事件函数changeselect()触发');
             this.showList = index;
-            document.getElementsByClassName("img-list")[0].style.display = "block";
           }
         },
         // 缩略图 底部文字溢出 => 来回滚动
@@ -658,8 +672,8 @@ var vm = null;
         },
         // 开屏页消失
         openingPageDisappear: function openingPageDisappear() {
-          var dom = document.getElementById('openingPage');
-          dom.style.display = "none";
+          var dom = $('#openingPage');
+          dom.fadeOut();
         },
         // 第一次进入项目设置通信值
         communicationValue: function communicationValue() {
@@ -670,8 +684,7 @@ var vm = null;
         selectDefinition: function selectDefinition() {
           $('#definitionPage .center .specific').map(function () {
             $(this).on('click', function () {
-              $(this).siblings().removeClass('active');
-              $(this).addClass('active');
+              $(this).addClass('active').siblings().removeClass('active');
             });
           });
         },
@@ -688,12 +701,29 @@ var vm = null;
         // 清晰度切换
         switchingDefinition: function switchingDefinition(param) {
           if (sessionStorage.getItem("sharpness") !== param) {
-            sessionStorage.setItem("sharpness", param);
+            document.getElementById('ifm').contentWindow.location.reload();
+            sessionStorage.setItem("sharpness", param); // 设置key来告诉test,用户非首次进入
+
             sessionStorage.setItem("key", null); // pause状态下切换清晰度 => 强制隐藏imglist => 防止误触
 
             this.$refs.imglist.style.display = "none";
-            document.getElementById('ifm').contentWindow.location.reload();
+            $("#definitionPage").hide();
           }
+        },
+        // 禁用换行符
+        disabledNewlineCharacter: function disabledNewlineCharacter() {
+          $("#commentPage .footer textarea").keypress(function (event) {
+            if (event.which == '13') {
+              return false;
+            }
+          });
+        },
+        // 离线工作提醒
+        offline: function offline() {
+          $("#offline").show();
+          setTimeout(function () {
+            $("#offline").hide();
+          }, 2000);
         }
       },
       watch: {}

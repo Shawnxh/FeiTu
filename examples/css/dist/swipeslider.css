@@ -2,8 +2,9 @@
   width: 30.875rem;
   height: 15rem;
   position: absolute;
-  left: 2rem;
-  top: 3.3125rem;
+  left: 50%;
+  top: 28%;
+  transform: translate(-50%,-50%);
   overflow: hidden;
   display: block;
   /* padding-top: 60%; */
@@ -48,7 +49,7 @@
   transform: translate(-50%, -50%);
   max-height: 100%;
   max-width: 100%;
-margin: 0 auto;
+  margin: 0 auto;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;

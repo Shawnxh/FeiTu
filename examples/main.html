@@ -14,11 +14,12 @@
 <body>
     <div id="app">
         <iframe class="ifm" id="ifm" name="ifm" :src="'./test.html?video='+n+'.mp4'" frameborder="0" v-if="showList==n"
-            v-for="n in 10">
+            v-for="n in 15">
         </iframe>
         <!-- 土司提示 -->
         <div id="toast">Iphone设备无法使用!</div>
         <div id="signIn">正在登录中,请稍后...</div>
+        <div id="offline">网络连接异常，请检测后重试</div>
         <!-- comment页面 -->
         <section id="commentPage" ref="commentPage">
             <div id="releaseFeedback"></div>
@@ -51,11 +52,17 @@
                             <div class="hr"></div>
                         </div>
                     </div>
+                    <div id="pull-up">
+                        <div class="pull-up-content"><span></span></div>
+                        <div class="pull-up-content"><span></span></div>
+                        <div class="pull-up-content"><span></span></div>
+                        <div class="pull-up-content"><span></span></div>
+                    </div>
                 </div>
                 <div class="footer">
-                    <textarea name="" id="" cols="25" rows="3" maxlength="" placeholder="既然来了,总要留下点什么..."></textarea>
+                    <textarea name="" id="" cols="" rows="" maxlength="" placeholder="既然来了,总要留下点什么..."></textarea>
                     <!-- <input type="text" placeholder="输入评论..."> -->
-                    <div class="release" @click="sendComment">发布</div>
+                    <div class="release" @click="sendComment"></div>
                 </div>
             </div>
         </section>
@@ -111,7 +118,7 @@
         <!-- 开屏页 -->
         <section id="openingPage">
             <div class="head" ref="head"></div>
-            <div class="name">德国莱茵集团</div>
+            <div class="name"></div>
             <div class="loading"></div>
             <div class="go" ref="go">开启全景之旅</div>
             <div class="support">飞图科技支持</div>
@@ -121,7 +128,8 @@
         <!-- 缩略图 -->
         <div class="img-list" v-show="isShow" ref="imglist">
             <div class="imgNameContainer" v-for="(item,index) in Lists" :key="index">
-                <img @click="changeSelect(index+1)" :src="item.src" :alt="item.name" />
+                <img @click="changeSelect(index+1)" :src="item.src" :alt="item.name"
+                    :class="index+1==showList?'active':''" />
                 <div class="thumbnailName">{{item.name}}</div>
             </div>
         </div>
@@ -140,14 +148,14 @@
 
                     <div>若视角偏离，视角恢复<img class="gesture-img" src="./img/gesture2.png" alt="" />按钮可以帮您恢复正常视角。</div>
                 </div>
-                <div class="btn" ref="btn">知道了</div>
-                <!-- <div class="close" ref="close"></div> -->
+                <div class="btn" ref="btn"></div>
             </div>
         </div>
     </div>
-    <script src="https://res.wx.qq.com/open/js/jweixin-1.6.0.js"></script>
+
     <script src="./vendor/vue.min.js"></script>
     <script src="./vendor/jquery-3.5.1.min.js"></script>
+    <script src="https://res.wx.qq.com/open/js/jweixin-1.6.0.js"></script>
     <script src="./js/main.js"></script>
     <script src="./js/share.js"></script>
     </script>

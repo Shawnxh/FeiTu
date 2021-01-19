@@ -176,7 +176,8 @@
         }, false);
         that.renderer.domElement.addEventListener('wheel', function (e) {
             var delta = e.deltaY > 0 ? 15 : -15;
-            if (that.camera.fov + delta * 0.05 >= 10 && that.camera.fov + delta * 0.05 <= 120) {
+            // >= 10 / <= 120
+            if (that.camera.fov + delta * 0.05 >= 60 && that.camera.fov + delta * 0.05 <= 120) {
                 fovChange(delta);
             }
         }, false);
@@ -237,6 +238,10 @@
 
         function ongyroreset() {
             that.controls && (that.controls.reset());
+            // if (that.controls) {
+            //     that.controls.reset();
+            //     that.camera.fov = 90;
+            // };
         }
         that.touchStart = function (e) {
             if (e.targetTouches) {
@@ -329,7 +334,8 @@
                     var pos1 = spots[ids[1]];
                     var s = Math.sqrt(Math.pow(pos0.x - pos1.x, 2) + Math.pow(pos0.y - pos1.y, 2));
                     var s1 = (s - _s) / 4;
-                    if (that.controls.object.fov - s1 < 140 && that.controls.object.fov - s1 > 10 && _s) {
+                    // < 140 / > 10
+                    if (that.controls.object.fov - s1 < 100 && that.controls.object.fov - s1 > 60 && _s) {
                         that.controls.enable = false;
                         that.controls.object.fov -= s1;
                         that.controls.dampingFactor = that.controls.defaultDampingFactor * that.controls.object.defaultFov / that.controls.object.fov;
@@ -445,10 +451,10 @@
             sessionStorage.setItem("videoStatus", "play");
             window.parent.document.getElementsByClassName("img-list")[0].style.display = "none";
             toolBar.btn1.style.background = "url(./img/home/pause.png) no-repeat";
-            toolBar.btn1.style.backgroundSize = "5.5rem 5.5625rem";
-            toolBar.btn1.style.bottom = "3.875rem";
-            toolBar.back.style.bottom = "5rem";
-            toolBar.menu.style.bottom = "5rem";
+            toolBar.btn1.style.backgroundSize = "6.5625rem 7.4375rem";
+            toolBar.btn1.style.bottom = "3.5rem";
+            toolBar.back.style.bottom = "4rem";
+            toolBar.menu.style.bottom = "4rem";
             let another = document.getElementById('another');
             // toolBar.btn.innerHTML = AVR.playerIcon.pauseSvg;
         }
@@ -457,10 +463,10 @@
             sessionStorage.setItem("videoStatus", "pause");
             window.parent.document.getElementsByClassName("img-list")[0].style.display = "block";
             toolBar.btn1.style.background = "url(./img/home/play.png) no-repeat";
-            toolBar.btn1.style.backgroundSize = "5.5rem 5.5625rem";
-            toolBar.btn1.style.bottom = "13.6875rem";
-            toolBar.back.style.bottom = "14.9375rem";
-            toolBar.menu.style.bottom = "14.9375rem";
+            toolBar.btn1.style.backgroundSize = "6.5625rem 7.4375rem";
+            toolBar.btn1.style.bottom = "10.6875rem";
+            toolBar.back.style.bottom = "11.0625rem";
+            toolBar.menu.style.bottom = "11.0625rem";
             // toolBar.btn.innerHTML = AVR.playerIcon.playSvg;
         }
 

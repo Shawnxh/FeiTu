@@ -1,6 +1,7 @@
 * {
   margin: 0;
   padding: 0;
+  border: 0;
   box-sizing: border-box;
   -webkit-tap-highlight-color: transparent;
 }
@@ -22,326 +23,356 @@
 
     .video {
       width: 100%;
-      height: auto;
+      height: 30%;
       position: absolute;
       left: 0;
       top: 50%;
       transform: translateY(-50%);
     }
-  }
-}
 
-#pop1,
-#pop2,
-#pop3 {
-  position: absolute;
-  left: 50%;
-  top: 40%;
-  transform: translate(-50%, -50%);
-  width: 33.8125rem;
-  height: 42.75rem;
-  z-index: 10;
-  background-color: #ffffff;
-  opacity: .8;
-  border-radius: 1.25rem;
-  /*left:50%;*/
-  /*top:50%;*/
-  /*margin-left:-10px;*/
-  /*margin-top:-10px;*/
-  /*width:20px;*/
-  /*height:20px;*/
-  /*background-color:rgba(255,255,255,0.5);*/
-  /*-webkit-border-radius: 50%;*/
-  /*-moz-border-radius: 50%;*/
-  /*border-radius: 50%;*/
-  display: none;
-  /*display: flex;*/
-  align-items: center;
-  // justify-content: space-around;
-  color: #fff;
-  flex-direction: column;
-
-  #title1,
-  #title2,
-  #title3 {
-    position: absolute;
-    left: 50%;
-    top: -0.9375rem;
-    transform: translateX(-50%);
-    font-size: 15px;
-    color: #ffffff;
-    height: 2.8875rem;
-    width: 19rem;
-    text-align: center;
-    background: url(../../img/home/title_bgi.png) no-repeat;
-    background-size: 19.0625rem 2.9375rem;
-  }
-
-  // #full_feature{
-  //   width: 90%;
-  //   height: 40%;
-  // }
-  .content {
-    font-size: 14px;
-    color: #303030;
-    width: 29rem;
-    // height: 15.6875rem;
-    height: 19.625rem;
-    overflow-x: hidden;
-    overflow-y: auto;
-    position: absolute;
-    left: 50%;
-    top: 19.1875rem;
-    transform: translateX(-50%);
-  }
-
-
-  .close {
-    width: 3.8125rem;
-    height: 3.75rem;
-    background-image: url(../../img/home/closePop.png);
-    background-size: 3.8125rem 3.75rem;
-    position: absolute;
-    left: 50%;
-    bottom: -5.5rem;
-    transform: translateX(-50%);
-  }
-}
-
-// toolBarAxera
-._toolBarArea {
-  display: block !important;
-
-  ._toolBarPV {
-    display: flex;
-    width: fit-content;
-    height: 1.5rem;
-    line-height: 1.5rem;
-    position: fixed;
-    left: 2rem;
-    top: 0.5rem;
-    opacity: 0;
-    cursor: pointer;
-    color: #fff;
-    font-family: PingFang SC;
-    font-weight: 500;
-    font-style: italic;
-    // 空白会被浏览器保留:
-    white-space: pre;
-    // animation: PV 0.5s ease 1s 1 forwards
-
-    ._toolBarTotalPV {
-      width: fit-content;
-      height: 1.5rem;
-    }
-
-    ._toolBarTodayPV {
-      margin-left: 2rem;
-      width: fit-content;
-      height: 1.5rem;
-    }
-  }
-
-  ._toolBarMsg {
-    width: 3.0625rem;
-    height: 2.83125rem;
-    position: fixed;
-    right: 2.625rem;
-    top: 7.875rem;
-    opacity: 0;
-    cursor: pointer;
-    background: url("../../img/home/msg.png") no-repeat;
-    background-size: 3.0625rem 2.8375rem;
-    // animation: msg 0.5s ease 1s 1 forwards
-  }
-
-  ._toolBarShare {
-    width: 3.0625rem;
-    height: 3.26875rem;
-    position: fixed;
-    top: 13.375rem;
-    right: 2.75rem;
-    opacity: 0;
-    cursor: pointer;
-    background: url("../../img/home/share.png") no-repeat;
-    background-size: 3.0625rem 3.26875rem;
-    // animation: share 0.5s ease 1s 1 forwards
-  }
-
-  ._toolBarThumbUpBox {
-    width: 2.9375rem;
-    height: 5rem;
-    position: fixed;
-
-    right: 2.6875rem;
-    top: 1.8125rem;
-    opacity: 0;
-
-    // animation: thumbUpBox 0.5s ease 1s 1 forwards;
-    ._toolBarThumbUp {
-      width: 2.9375rem;
-      height: 3.0625rem;
-      position: absolute;
-      top: 0;
-      left: 0;
-      cursor: pointer;
-      background: url("../../img/home/thumb_up.png") no-repeat;
-      background-size: 2.9375rem 3.0625rem;
-
-      &.active {
-        background: url("../../img/home/thumb_up_selected.png") no-repeat;
-        background-size: 2.9375rem 3.0625rem;
-      }
-    }
-
-    ._toolBarThumbUpValue {
-      width: fit-content;
-      height: 1.0625rem;
+    .close {
+      width: 3.8125rem;
+      height: 3.75rem;
+      background-image: url(../../img/home/closePop.png);
+      background-size: 100% 100%;
       position: absolute;
       left: 50%;
-      bottom: 0;
+      top: 70%;
       transform: translateX(-50%);
-      text-align: center;
-      color: #fff;
-    }
-
-  }
-
-  ._toolBarMore {
-    width: 3.6875rem;
-    height: 16rem;
-    position: fixed;
-    right: 2.3125rem;
-    top: 21.0625rem;
-    opacity: 0;
-    border: 1.5px solid #FFFFFF;
-    border-radius: 15px;
-    // animation: more 0.5s ease 1s 1 forwards;
-
-    ._toolBarReset {
-      width: 2.625rem;
-      height: 2.625rem;
-      position: absolute;
-      left: 50%;
-      bottom: 1.4375rem;
-      transform: translateX(-50%);
-      cursor: pointer;
-      background: url("../../img/home/reset.png") no-repeat;
-      background-size: 2.625rem 2.625rem;
-
-    }
-
-    ._toolBarGyro {
-      width: 2.625rem;
-      height: 2.375rem;
-      position: absolute;
-      left: 50%;
-      top: 50%;
-      transform: translate(-50%, -50%);
-      cursor: pointer;
-      background: url("../../img/home/gyro.png") no-repeat;
-      background-size: 2.625rem 2.375rem;
-
-      &.active {
-        background: url("../../img/home/gyro_selected.png") no-repeat;
-        background-size: 2.625rem 2.375rem;
-      }
-    }
-
-    ._toolBarZoomIn {
-      width: 2.3125rem;
-      height: 2.3125rem;
-      position: absolute;
-      left: 50%;
-      top: 1.4375rem;
-      transform: translateX(-50%);
-      cursor: pointer;
-      background: url("../../img/home/zoom_in.png") no-repeat;
-      background-size: 2.3125rem 2.3125rem;
     }
   }
 
-  ._toolBarScenario {
-    width: fit-content;
-    height: 2.9rem;
-    padding: 0 5%;
-    position: fixed;
-    left: 2rem;
-    top: 2.5rem;
-    opacity: 0;
-    border: 1.5px solid #ffffff;
-    // animation: scenario 0.5s ease 1s 1 forwards;
-
-    #scenarioName {
-      width: fit-content;
-      height: 1.6875rem;
-      line-height: 1.6875rem;
-      position: relative;
-      font-family: Adobe Heiti Std;
-      color: rgb(247, 240, 240);
-      font-size: 14px;
-      left: 50%;
-      top: 50%;
-      transform: translate(-50%, -50%);
-    }
-  }
-
-  ._toolBarZoomOut {
+  #textPop1,
+  #textPop2,
+  #textPop3 {
     display: none;
-    width: 2.9375rem;
-    height: 2.9375rem;
-    position: fixed;
-    top: 2.125rem;
-    right: 2.5rem;
-    background: url("../../img/home/zoom_out.png") no-repeat;
-    background-size: 2.9375rem 2.9375rem;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(22, 22, 22, 0.719);
+    z-index: 10;
+
+    #pop1,
+    #pop2,
+    #pop3 {
+      position: absolute;
+      left: 50%;
+      top: 40%;
+      transform: translate(-50%, -50%);
+      width: 36.25rem;
+      height: 45.125rem;
+      background-color: #141A3E;
+      border-radius: 1.3125rem;
+      border: 3px solid #E4CD8A;
+      border-image: linear-gradient(6deg, #E4CD8A) 6 6;
+
+      #title1,
+      #title2,
+      #title3 {
+        position: absolute;
+        left: 50%;
+        top: -3.375rem;
+        transform: translateX(-50%);
+        font-size: 2rem;
+        color: #af860f;
+        width: 23.3125rem;
+        height: 5.875rem;
+        line-height: 7.5rem;
+        text-align: center;
+        background: url(../../img/home/title_bgi.png) no-repeat;
+        background-size: 100% 100%;
+      }
+
+      .border {
+        width: 31.875rem;
+        height: 16rem;
+        position: absolute;
+        left: 50%;
+        top: 28%;
+        transform: translate(-50%, -50%);
+        background-image: url(../../img/home/rahmen.png);
+        background-size: 100% 100%;
+      }
+
+      .content {
+        font-size: 1.5rem;
+        color: #fff;
+        width: 31.4375rem;
+        height: 19rem;
+        overflow-y: auto;
+        position: absolute;
+        left: 50%;
+        bottom: 2.5rem;
+        transform: translateX(-50%);
+        text-indent: 2rem;
+      }
+
+      .close {
+        width: 3.8125rem;
+        height: 3.75rem;
+        background-image: url(../../img/home/closePop.png);
+        background-size: 100% 100%;
+        position: absolute;
+        left: 50%;
+        bottom: -5.25rem;
+        transform: translateX(-50%);
+      }
+    }
   }
 
+  // toolBarAxera
+  ._toolBarArea {
+    display: block !important;
 
-  ._toolBarBack {
-    -webkit-tap-highlight-color: transparent;
-    position: fixed;
-    width: 3.1875rem;
-    height: 3.0625rem;
-    border: none;
-    background: url("../../img/home/back.png") no-repeat;
-    background-size: 3.1875rem 3.0625rem;
-    left: 7.8125rem;
-    bottom: 14.9375rem;
-    opacity: 0;
-    cursor: pointer;
-    // animation: back 0.5s ease 1s 1 forwards;
+    ._toolBarPV {
+      display: flex;
+      width: fit-content;
+      height: 1.5rem;
+      line-height: 1.5rem;
+      position: fixed;
+      left: 2rem;
+      top: 0.5rem;
+      opacity: 0;
+      cursor: pointer;
+      color: #fff;
+      font-family: PingFang SC;
+      font-weight: 500;
+      font-style: italic;
+      // 空白会被浏览器保留:
+      white-space: pre;
+      // animation: PV 0.5s ease 1s 1 forwards
+
+      ._toolBarTotalPV {
+        width: fit-content;
+        height: 1.5rem;
+      }
+
+      ._toolBarTodayPV {
+        margin-left: 2rem;
+        width: fit-content;
+        height: 1.5rem;
+      }
+    }
+
+    ._toolBarMsg {
+      width: 4.375rem;
+      height: 4.375rem;
+      position: fixed;
+      right: 1.3125rem;
+      top: 7.875rem;
+      opacity: 0;
+      background: url("../../img/home/msg.png") no-repeat;
+      background-size: 100% 100%;
+      // animation: msg 0.5s ease 1s 1 forwards
+    }
+
+    ._toolBarShare {
+      width: 4.375rem;
+      height: 4.375rem;
+      position: fixed;
+      top: 13.375rem;
+      right: 1.3125rem;
+      opacity: 0;
+      background: url("../../img/home/share.png") no-repeat;
+      background-size: 100% 100%;
+      // animation: share 0.5s ease 1s 1 forwards
+    }
+
+    ._toolBarThumbUpBox {
+      width: 4.375rem;
+      height: 5.5rem;
+      position: fixed;
+      right: 1.3125rem;
+      top: 1.8125rem;
+      opacity: 0;
+
+      // animation: thumbUpBox 0.5s ease 1s 1 forwards;
+      ._toolBarThumbUp {
+        width: 4.375rem;
+        height: 4.375rem;
+        position: absolute;
+        top: 0;
+        left: 0;
+        cursor: pointer;
+        background: url("../../img/home/video_thumb_up.png") no-repeat;
+        background-size: 100% 100%;
+
+        &.active {
+          background: url("../../img/home/video_thumb_up_selected.png") no-repeat;
+          background-size: 100% 100%;
+        }
+      }
+
+      ._toolBarThumbUpValue {
+        width: fit-content;
+        height: 1rem;
+        position: absolute;
+        left: 50%;
+        bottom: 0;
+        transform: translateX(-50%);
+        text-align: center;
+        color: #fff;
+      }
+
+    }
+
+    ._toolBarMore {
+      width: 3.5625rem;
+      height: 13.125rem;
+      position: fixed;
+      right: 1.6rem;
+      top: 20.0625rem;
+      opacity: 0;
+      // animation: more 0.5s ease 1s 1 forwards;
+
+      ._toolBarReset {
+        width: 3.5625rem;
+        height: 3.5625rem;
+        position: absolute;
+        left: 50%;
+        bottom: 0;
+        transform: translateX(-50%);
+        cursor: pointer;
+        background: url("../../img/home/reset.png") no-repeat;
+        background-size: 100% 100%;
+
+      }
+
+      ._toolBarGyro {
+        width: 3.5625rem;
+        height: 3.5625rem;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        cursor: pointer;
+        background: url("../../img/home/gyro.png") no-repeat;
+        background-size: 100% 100%;
+
+        &.active {
+          background: url("../../img/home/gyro_selected.png") no-repeat;
+          background-size: 100% 100%;
+        }
+      }
+
+      ._toolBarZoomIn {
+        width: 3.5625rem;
+        height: 3.5625rem;
+        position: absolute;
+        left: 50%;
+        top: 0;
+        transform: translateX(-50%);
+        cursor: pointer;
+        background: url("../../img/home/zoom_in.png") no-repeat;
+        background-size: 100% 100%;
+      }
+    }
+
+    ._toolBarScenario {
+      width: fit-content;
+      height: 3.6875rem;
+      position: fixed;
+      left: 5rem;
+      top: 2.5rem;
+      opacity: 0;
+
+      // animation: scenario 0.5s ease 1s 1 forwards;
+      &::before {
+        content: "";
+        width: 4rem;
+        height: 3.6875rem;
+        position: absolute;
+        left: -4rem;
+        top: 0;
+        background: url(../../img/home/scenario_bgi.png) no-repeat;
+        background-size: 350% 100%;
+        background-position: left center;
+      }
+
+      &::after {
+        content: "";
+        width: 4rem;
+        height: 3.6875rem;
+        position: absolute;
+        right: -4rem;
+        top: 0;
+        background: url(../../img/home/scenario_bgi.png) no-repeat;
+        background-size: 350% 100%;
+        background-position: right center;
+      }
+
+      #scenarioName {
+        width: fit-content;
+        height: 3.6875rem;
+        line-height: 3.6875rem;
+        font-family: FZQKBYSJW;
+        color: rgb(247, 240, 240);
+        font-size: 2rem;
+        background: url(../../img/home/scenario_bgi.png) no-repeat;
+        background-size: 400% 100%;
+        background-position: center center;
+      }
+    }
+
+    ._toolBarZoomOut {
+      display: none;
+      width: 3.5625rem;
+      height: 3.5625rem;
+      position: fixed;
+      top: 2.125rem;
+      right: 2.5rem;
+      background: url("../../img/home/zoom_out.png") no-repeat;
+      background-size: 100% 100%;
+    }
+
+
+    ._toolBarBack {
+      -webkit-tap-highlight-color: transparent;
+      position: fixed;
+      width: 5.9375rem;
+      height: 5.9375rem;
+      border: none;
+      background: url("../../img/home/back.png") no-repeat;
+      background-size: 100% 100%;
+      left: 7.8125rem;
+      bottom: 11.0625rem;
+      opacity: 0;
+      cursor: pointer;
+      // animation: back 0.5s ease 1s 1 forwards;
+    }
+
+    ._toolBarBtn {
+      position: fixed;
+      width: 6.5625rem;
+      height: 7.4375rem;
+      background: url("../../img/home/play.png") no-repeat;
+      background-size: 6.5625rem 7.4375rem;
+      left: 50%;
+      bottom: 10.1875rem;
+      opacity: 0;
+      transform: translatex(-50%);
+      cursor: pointer;
+      // animation: btn 0.5s ease 1s 1 forwards;
+
+    }
+
+    ._toolBarMenu {
+      position: fixed;
+      width: 5.9375rem;
+      height: 5.9375rem;
+      background: url("../../img/home/menu.png") no-repeat;
+      background-size: 100% 100%;
+      right: 7.75rem;
+      bottom: 11.0625rem;
+      opacity: 0;
+      cursor: pointer;
+      // animation: menu 0.5s ease 1s 1 forwards;
+
+    }
+
   }
-
-  ._toolBarBtn {
-    position: fixed;
-    width: 5.5rem;
-    height: 6rem;
-    background: url("../../img/home/play.png") no-repeat;
-    background-size: 5.5rem 6rem;
-    left: 50%;
-    bottom: 13.6875rem;
-    opacity: 0;
-    transform: translatex(-50%);
-    cursor: pointer;
-    // animation: btn 0.5s ease 1s 1 forwards;
-
-  }
-
-  ._toolBarMenu {
-    position: fixed;
-    width: 3.4375rem;
-    height: 3.0625rem;
-    background: url("../../img/home/menu.png") no-repeat;
-    background-size: 3.4375rem 3.0625rem;
-    right: 7.75rem;
-    bottom: 14.9375rem;
-    opacity: 0;
-    cursor: pointer;
-    // animation: menu 0.5s ease 1s 1 forwards;
-
-  }
-
 }
 
 // 全景图淡出

@@ -1,4 +1,4 @@
-var vm = null;
+let vm = null;
 
 ! function () {
     initHome();
@@ -7,8 +7,8 @@ var vm = null;
             el: "#app",
             data: {
                 // 登录之前的api前缀 + 登录之后的api前缀
-                baseUrl: "http://192.168.100.70/open",
-                loginBaseUrl: "http://192.168.100.70/login_open",
+                baseUrl: "http://192.168.100.178/open",
+                loginBaseUrl: "http://192.168.100.178/login_open",
                 // baseUrl: "https://backtest.cdflytu.com/open",
                 // loginBaseUrl: "https://backtest.cdflytu.com/login-open",
 
@@ -61,9 +61,9 @@ var vm = null;
                 }
             },
             created: function () {
-                var that = this;
+                let that = this;
 
-                var token = this.getQueryVariable('token');
+                let token = this.getQueryVariable('token');
                 this.setCookie("token", token, 7);
 
                 // 检测当前是否有用户登录
@@ -85,45 +85,36 @@ var vm = null;
 
                 window.addEventListener("storage", function (e) {
                     if (e.storageArea.changeTo == "true") {
-                        // let currentSrc = (document.getElementsByClassName('ifm')[1] ? window.parent.document.getElementsByClassName('ifm')[1] : window.parent.document.getElementsByClassName('ifm')[0]).src;
-                        // that.showList = Number((currentSrc.split('=')[1]).split('.')[0]);
-                        if (that.showList + 1 < 10) {
+                        if (that.showList + 1 < 15) {
                             that.changeSelect(that.showList + 1);
                         }
                     }
                 });
-
-                window.onload = () => {
-                    // document.body.addEventListener('touchmove', function (e) {
-                    //     e.preventDefault()
-                    // }, { passive: false });
-                    this.changeFontSize();
-                    this.thumbnailNameScroll();
-                    this.communicationValue();
-                    this.selectDefinition();
-                    this.turnOnGyro();
-                }
-
                 // 浏览器离线(断网行为)
-                window.addEventListener('offline', function () {
-                    alert('网络连接断开！');
+                window.addEventListener('offline', () => {
+                    this.offline();
                 })
             },
             mounted: function () {
-                let that = this;
+                this.changeFontSize();
+                this.thumbnailNameScroll();
+                this.communicationValue();
+                this.selectDefinition();
+                this.turnOnGyro();
+                this.disabledNewlineCharacter();
                 // 未登录
-                if (!that.isLogin) {
+                if (!this.isLogin) {
                     this.$refs.login.onclick = () => {
                         $("#signIn").show();
-                        window.location.href = this.loginNeed + '?from=' + that.encodeUrl;
+                        window.location.href = this.loginNeed + '?from=' + this.encodeUrl;
                     }
                 }
 
                 // 登录成功
-                if (that.isLogin) {
+                if (this.isLogin) {
                     // 填充menu栏的用户信息
-                    $('#menu .top .avatar img').attr("src", that.loginUser.wxHeadImgUrl);
-                    $('#menu .top .nickName').text(that.loginUser.wxNickname);
+                    $('#menu .top .avatar img').attr("src", this.loginUser.wxHeadImgUrl);
+                    $('#menu .top .nickName').text(this.loginUser.wxNickname);
 
                     // 填充评论列表
                     this.fillCommentList();
@@ -193,36 +184,41 @@ var vm = null;
                 refresh() {
                     let that = this;
                     let self = $("#commentPage .detail");
-                    let _start, _end, down_selfTop;
+                    let _start, down_start, _end, down_end, down_selfTop;
                     self.on("touchstart", function (e) {
-                        e.preventDefault();
+                        down_start = null;
+                        down_end = null;
+
                         down_selfTop = $(this).scrollTop();
                         let touch = e.targetTouches[0];
                         _start = touch.pageY;
+                        if (down_selfTop == 0) {
+                            down_start = touch.pageY;
+                        }
                     });
 
                     self.on("touchmove", function (e) {
                         e.preventDefault();
                         let touch = e.targetTouches[0];
                         _end = touch.pageY - _start;
-                        if (_end > 0) {
+                        down_start && (down_end = touch.pageY - down_start);
+                        if (_end > 0 && $(this).scrollTop() > 0) {
                             down_selfTop > _end ? $(this).scrollTop(down_selfTop - _end) : $(this).scrollTop(0);
                         }
-                        if (_end > 0 && $(this).scrollTop() == 0) {
-                            $("#commentPage .detail #pull-down").height(_end);
-                            if (_end >= 60) {
+                        if (down_end && down_end > 0 && $(this).scrollTop() == 0) {
+                            $("#commentPage .detail #pull-down").height(down_end);
+                            if (down_end >= 60) {
                                 $("#commentPage .detail .pull-down-content").text("释放立即刷新");
                             }
                         }
                     });
 
                     self.on("touchend", function (e) {
-                        e.preventDefault();
-                        if (_end >= 60 && $("#commentPage .detail #pull-down").height() > 0) {
-                            $("#commentPage .detail .pull-down-content").text("刷新加载中...");
+                        if (down_end && down_end >= 60) {
+                            $("#commentPage .detail .pull-down-content").text("正在刷新...");
                             setTimeout(() => {
                                 that.fillCommentList();
-                            }, 500)
+                            }, 300)
                         } else {
                             $("#commentPage .detail #pull-down").height(0);
                         }
@@ -234,25 +230,47 @@ var vm = null;
                     let self = $("#commentPage .detail");
                     // listBox的实际高度
                     let obj = $("#commentPage #listBox");
-                    let _start, _end, up_selfTop;
+                    let _start, up_start, _end, up_end, up_selfTop, _end_abs, up_end_abs;
                     self.on("touchstart", function (e) {
-                        e.preventDefault();
+                        up_start = null;
+                        up_end = null;
+                        up_end_abs = null;
+
                         up_selfTop = $(this).scrollTop();
                         let touch = e.targetTouches[0];
                         _start = touch.pageY;
+                        if (($(this).scrollTop() + $(this).height()) >= obj.outerHeight()) {
+                            up_start = touch.pageY;
+                        }
                     });
 
                     self.on("touchmove", function (e) {
                         e.preventDefault();
                         let touch = e.targetTouches[0];
                         _end = touch.pageY - _start;
-                        if (_end < 0) {
-                            // console.log(up_selfTop)
-                            // console.log($(this).scrollTop())
-                            $(this).scrollTop(up_selfTop - _end);
+                        up_start && (up_end = touch.pageY - up_start);
+                        _end_abs = Math.abs(_end);
+                        up_end && (up_end_abs = Math.abs(up_end));
+                        if (_end < 0 && ($(this).scrollTop() + $(this).height()) < obj.outerHeight()) {
+                            $(this).scrollTop(up_selfTop + _end_abs);
                         }
-                        // 距离底部还有 60px 的时候启动
-                        if (($(this).scrollTop() + $(this).height() + 60) > obj.height() && that.pageNo < Number(that.pageTotal)) {
+                        if (up_end && up_end < 0 && ($(this).scrollTop() + $(this).height()) >= obj.outerHeight() && that.pageNo < Number(that.pageTotal)) {
+                            $("#commentPage .detail #pull-up").height(up_end_abs);
+                            $(this).scrollTop(up_selfTop + up_end_abs);
+                        }
+                    });
+
+                    self.on("touchend", function (e) {
+                        // 所有评论 all-in => 继续上滑
+                        if (($(this).scrollTop() + $(this).height()) == obj.outerHeight() && that.pageNo == Number(that.pageTotal)) {
+                            let releaseStatus = $("#commentPage #releaseFeedback");
+                            releaseStatus.text("没有更多内容啦!");
+                            releaseStatus.show();
+                            setTimeout(() => {
+                                releaseStatus.hide();
+                            }, 1200);
+                        }
+                        if (up_end_abs && up_end_abs >= 60 && that.pageNo < Number(that.pageTotal)) {
                             that.pageNo += 1;
                             $.ajax({
                                 type: "get",
@@ -272,24 +290,18 @@ var vm = null;
                                     that.commentList = that.commentList.concat(b);
                                     that.commentCount = res.result.page.totalNum;
                                     that.pageTotal = res.result.page.totalPage;
+                                    if ($("#commentPage .detail #pull-up").height() > 0) {
+                                        setTimeout(() => {
+                                            $("#commentPage .detail #pull-up").height(0);
+                                        }, 300);
+                                    }
                                 },
                                 error: function (err) {
                                     console.log(err)
                                 }
                             })
-                        }
-                    });
-
-                    // 所有评论 all-in => 继续上滑
-                    self.on("touchend", function (e) {
-                        e.preventDefault();
-                        if (($(this).scrollTop() + $(this).height()) === obj.height() && that.pageNo === Number(that.pageTotal)) {
-                            let releaseStatus = $("#commentPage #releaseFeedback");
-                            releaseStatus.text("没有更多内容啦!");
-                            releaseStatus.show();
-                            setTimeout(() => {
-                                releaseStatus.hide();
-                            }, 1200);
+                        } else {
+                            $("#commentPage .detail #pull-up").height(0);
                         }
                     });
                 },
@@ -306,8 +318,11 @@ var vm = null;
                         },
                         success: function (res) {
                             if ($("#commentPage .detail #pull-down").height() > 0) {
-                                $("#commentPage .detail .pull-down-content").text("下拉刷新");
-                                $("#commentPage .detail #pull-down").height(0);
+                                $("#commentPage .detail .pull-down-content").text("刷新成功");
+                                setTimeout(() => {
+                                    $("#commentPage .detail #pull-down").height(0);
+                                    $("#commentPage .detail .pull-down-content").text("下拉刷新");
+                                }, 800);
                             }
                             // 评论解码
                             let newCommentList = res.result.list.map((item) => {
@@ -390,6 +405,7 @@ var vm = null;
                     let commentId = e.target.getAttribute('data-cid');
 
                     if ($("[data-cid='" + commentId + "']").hasClass('active')) {
+                        console.log("22222222222")
                         // 取消评论点赞
                         $.ajax({
                             type: "post",
@@ -453,17 +469,17 @@ var vm = null;
                 // ==================================================================================
 
                 setCookie(cname, cvalue, exdays) {
-                    var d = new Date();
+                    let d = new Date();
                     d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
-                    var expires = "expires=" + d.toGMTString();
+                    let expires = "expires=" + d.toGMTString();
                     document.cookie = cname + "=" + cvalue + "; " + expires;
                 },
 
                 getCookie(cname) {
-                    var name = cname + "=";
-                    var ca = document.cookie.split(';');
-                    for (var i = 0; i < ca.length; i++) {
-                        var c = ca[i].trim();
+                    let name = cname + "=";
+                    let ca = document.cookie.split(';');
+                    for (let i = 0; i < ca.length; i++) {
+                        let c = ca[i].trim();
                         if (c.indexOf(name) == 0) return c.substring(name.length, c.length);
                     }
                     return "";
@@ -471,10 +487,10 @@ var vm = null;
 
                 // 通过url获取token值
                 getQueryVariable(variable) {
-                    var query = window.location.search.substring(1);
-                    var vars = query.split("&");
-                    for (var i = 0; i < vars.length; i++) {
-                        var pair = vars[i].split("=");
+                    let query = window.location.search.substring(1);
+                    let vars = query.split("&");
+                    for (let i = 0; i < vars.length; i++) {
+                        let pair = vars[i].split("=");
                         if (pair[0] == variable) {
                             return pair[1];
                         }
@@ -486,9 +502,9 @@ var vm = null;
                     return Base64 = {
                         _keyStr: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",
                         encode: function (e) {
-                            var t = "";
-                            var n, r, i, s, o, u, a;
-                            var f = 0;
+                            let t = "";
+                            let n, r, i, s, o, u, a;
+                            let f = 0;
                             e = Base64._utf8_encode(e);
                             while (f < e.length) {
                                 n = e.charCodeAt(f++);
@@ -508,10 +524,10 @@ var vm = null;
                             return t
                         },
                         decode: function (e) {
-                            var t = "";
-                            var n, r, i;
-                            var s, o, u, a;
-                            var f = 0;
+                            let t = "";
+                            let n, r, i;
+                            let s, o, u, a;
+                            let f = 0;
                             e = e.replace(/[^A-Za-z0-9+/=]/g, "");
                             while (f < e.length) {
                                 s = this._keyStr.indexOf(e.charAt(f++));
@@ -534,9 +550,9 @@ var vm = null;
                         },
                         _utf8_encode: function (e) {
                             e = e.replace(/rn/g, "n");
-                            var t = "";
-                            for (var n = 0; n < e.length; n++) {
-                                var r = e.charCodeAt(n);
+                            let t = "";
+                            for (let n = 0; n < e.length; n++) {
+                                let r = e.charCodeAt(n);
                                 if (r < 128) {
                                     t += String.fromCharCode(r)
                                 } else if (r > 127 && r < 2048) {
@@ -551,9 +567,9 @@ var vm = null;
                             return t
                         },
                         _utf8_decode: function (e) {
-                            var t = "";
-                            var n = 0;
-                            var r = c1 = c2 = 0;
+                            let t = "";
+                            let n = 0;
+                            let r = c1 = c2 = 0;
                             while (n < e.length) {
                                 r = e.charCodeAt(n);
                                 if (r < 128) {
@@ -577,9 +593,10 @@ var vm = null;
                 // =======================================================================================
 
                 changeSelect(index) {
+                    $(".img-list").first().hide();
                     if (index != this.showList) {
+                        console.log('热点事件函数changeselect()触发')
                         this.showList = index;
-                        document.getElementsByClassName("img-list")[0].style.display = "block";
                     }
                 },
 
@@ -623,8 +640,8 @@ var vm = null;
 
                 // 开屏页消失
                 openingPageDisappear() {
-                    let dom = document.getElementById('openingPage');
-                    dom.style.display = "none";
+                    let dom = $('#openingPage');
+                    dom.fadeOut();
                 },
 
                 // 第一次进入项目设置通信值
@@ -637,8 +654,7 @@ var vm = null;
                 selectDefinition() {
                     $('#definitionPage .center .specific').map(function () {
                         $(this).on('click', function () {
-                            $(this).siblings().removeClass('active');
-                            $(this).addClass('active');
+                            $(this).addClass('active').siblings().removeClass('active');
                         })
                     })
                 },
@@ -656,12 +672,29 @@ var vm = null;
                 // 清晰度切换
                 switchingDefinition(param) {
                     if (sessionStorage.getItem("sharpness") !== param) {
+                        document.getElementById('ifm').contentWindow.location.reload();
                         sessionStorage.setItem("sharpness", param);
+                        // 设置key来告诉test,用户非首次进入
                         sessionStorage.setItem("key", null);
                         // pause状态下切换清晰度 => 强制隐藏imglist => 防止误触
                         this.$refs.imglist.style.display = "none";
-                        document.getElementById('ifm').contentWindow.location.reload();
+                        $("#definitionPage").hide();
                     }
+                },
+                // 禁用换行符
+                disabledNewlineCharacter() {
+                    $("#commentPage .footer textarea").keypress(function (event) {
+                        if (event.which == '13') {
+                            return false;
+                        }
+                    })
+                },
+                // 离线工作提醒
+                offline() {
+                    $("#offline").show();
+                    setTimeout(() => {
+                        $("#offline").hide();
+                    }, 2000);
                 }
             },
             watch: {}
